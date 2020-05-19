@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "expand.h"
+
 #define MAGIC 0xABCD
 
 #define PATH_MAX 4096
@@ -69,7 +71,7 @@ bail:
 
 #define GAMEMAPS_MAGIC "TED5v1.0"
 
-static int LoadLevel(CWLevel *level, const char *data);
+static int LoadLevel(CWLevel *level, const char *data, const int off);
 static int LoadMapData(CWolfMap *map, const char *path)
 {
 	int err = 0;
@@ -94,11 +96,12 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	if (strncmp(buf, GAMEMAPS_MAGIC, strlen(GAMEMAPS_MAGIC)) != 0)
 	{
 		err = -1;
-		fprintf(stderr, "Gamemaps does not contain magic string " GAMEMAPS_MAGIC);
+		fprintf(
+			stderr, "Gamemaps does not contain magic string " GAMEMAPS_MAGIC);
 		goto bail;
 	}
 
-	const int32_t *ptr = &map->mapHead.ptr[0];
+	const int32_t *ptr;
 	for (const int32_t *ptr = &map->mapHead.ptr[0]; *ptr > 0; ptr++)
 	{
 		map->nLevels++;
@@ -107,7 +110,7 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	CWLevel *lPtr = map->levels;
 	for (const int32_t *ptr = &map->mapHead.ptr[0]; *ptr > 0; ptr++, lPtr++)
 	{
-		err = LoadLevel(lPtr, buf + *ptr);
+		err = LoadLevel(lPtr, buf, *ptr);
 		if (err != 0)
 		{
 			goto bail;
@@ -120,26 +123,79 @@ bail:
 		fclose(f);
 	}
 	free(buf);
+	if (err != 0)
+	{
+		CWFree(map);
+	}
 	return err;
 }
-static int LoadLevel(CWLevel *level, const char *data)
+static int LoadPlane(
+	CWPlane *plane, const char *data, const uint32_t off, const uint16_t len,
+	char *buf, const int bufSize);
+static int LoadLevel(CWLevel *level, const char *data, const int off)
 {
 	int err = 0;
-	memcpy(&level->header, data, sizeof(level->header));
+	char *buf = NULL;
+	memcpy(&level->header, data + off, sizeof(level->header));
 	if (strncmp(level->header.signature, "!ID!", 4) != 0)
 	{
 		err = -1;
-		fprintf(
-			stderr, "Level does not contain signature");
+		fprintf(stderr, "Level does not contain signature");
 		goto bail;
 	}
+
+	const int bufSize =
+		level->header.width * level->header.height * sizeof(uint16_t);
+	buf = malloc(bufSize);
+	for (int i = 0; i < NUM_PLANES; i++)
+	{
+		const uint32_t off = *(&level->header.offPlane0 + i);
+		const uint16_t len = *(&level->header.lenPlane0 + i);
+		err = LoadPlane(&level->planes[i], data, off, len, buf, bufSize);
+		if (err != 0)
+		{
+			goto bail;
+		}
+	}
+
+bail:
+	free(buf);
+	return err;
+}
+static int LoadPlane(
+	CWPlane *plane, const char *data, const uint32_t off, const uint16_t len,
+	char *buf, const int bufSize)
+{
+	int err = 0;
+
+	if (off == 0)
+	{
+		goto bail;
+	}
+
+	ExpandCarmack(data + off, buf);
+	plane->len = bufSize;
+	plane->plane = malloc(bufSize);
+	ExpandRLEW(buf, plane->plane, MAGIC);
 
 bail:
 	return err;
 }
 
+static void LevelFree(CWLevel *level);
 void CWFree(CWolfMap *map)
 {
+	for (int i = 0; i < map->nLevels; i++)
+	{
+		LevelFree(&map->levels[i]);
+	}
 	free(map->levels);
 	memset(map, 0, sizeof *map);
+}
+static void LevelFree(CWLevel *level)
+{
+	for (int i = 0; i < NUM_PLANES; i++)
+	{
+		free(level->planes[i].plane);
+	}
 }

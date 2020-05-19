@@ -22,9 +22,16 @@ typedef struct
 } CWLevelHead;
 #pragma pack(pop)
 
+#define NUM_PLANES 3
+typedef struct
+{
+	int len;
+	uint16_t *plane;
+} CWPlane;
 typedef struct
 {
 	CWLevelHead header;
+	CWPlane planes[NUM_PLANES];
 } CWLevel;
 
 typedef struct
