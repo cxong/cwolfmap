@@ -17,18 +17,21 @@ int main(int argc, char *argv[])
 		printf(
 			"Level %d: %s (%dx%d)\n", i + 1, level->header.name,
 			level->header.width, level->header.height);
-		for (int x = 0; x < level->header.width; x++)
+		const CWPlane *plane = level->planes;
+		for (int j = 0; j < NUM_PLANES; j++, plane++)
 		{
-			for (int y = 0; y < level->header.height; y++)
+			printf("- Plane %d\n", j);
+			for (int x = 0; x < level->header.width; x++)
 			{
-				const uint16_t ch =
-					level->planes[0].plane[x + y * level->header.width];
-				// Avoid non-printable characters
-				printf(
-					"%c",
-					(unsigned char)(ch % (255 - 31)) + 31);
+				for (int y = 0; y < level->header.height; y++)
+				{
+					const uint16_t ch =
+						plane->plane[x*level->header.height + y];
+					// Avoid non-printable characters
+					printf("%c", (unsigned char)(ch % (255 - 31)) + 31);
+				}
+				printf("\n");
 			}
-			printf("\n");
 		}
 	}
 
