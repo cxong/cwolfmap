@@ -25,8 +25,7 @@ int main(int argc, char *argv[])
 			{
 				for (int y = 0; y < level->header.height; y++)
 				{
-					const uint16_t ch =
-						plane->plane[x*level->header.height + y];
+					const uint16_t ch = CWLevelGetTile(level, j, x, y);
 					// Avoid non-printable characters
 					printf("%c", (unsigned char)(ch % (255 - 31)) + 31);
 				}
@@ -34,6 +33,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
+	printf("Loaded %d sounds\n", map.audioHead.nOffsets);
 
 bail:
 	CWFree(&map);

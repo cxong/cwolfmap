@@ -30,6 +30,20 @@ int CWLoad(CWolfMap *map, const char *path)
 		goto bail;
 	}
 
+	sprintf(pathBuf, "%s/AUDIOHED.WL1", path);
+	err = CWAudioLoadHead(&map->audioHead, pathBuf);
+	if (err != 0)
+	{
+		goto bail;
+	}
+
+	sprintf(pathBuf, "%s/AUDIOT.WL1", path);
+	err = CWAudioLoadAudioT(pathBuf);
+	if (err != 0)
+	{
+		goto bail;
+	}
+
 bail:
 	return err;
 }
@@ -190,6 +204,7 @@ void CWFree(CWolfMap *map)
 		LevelFree(&map->levels[i]);
 	}
 	free(map->levels);
+	CWAudioHeadFree(&map->audioHead);
 	memset(map, 0, sizeof *map);
 }
 static void LevelFree(CWLevel *level)
@@ -198,4 +213,11 @@ static void LevelFree(CWLevel *level)
 	{
 		free(level->planes[i].plane);
 	}
+}
+
+uint16_t CWLevelGetTile(
+	const CWLevel *level, const int planeIndex, const int x, const int y)
+{
+	const CWPlane *plane = &level->planes[planeIndex];
+	return plane->plane[x * level->header.height + y];
 }

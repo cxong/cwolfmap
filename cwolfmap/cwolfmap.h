@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include "audio.h"
+
 #define CW_LEVELS 100
 #pragma pack(push, 1)
 typedef struct
@@ -39,7 +41,11 @@ typedef struct
 	CWMapHead mapHead;
 	CWLevel *levels;
 	int nLevels;
+	CWAudioHead audioHead;
 } CWolfMap;
 
 int CWLoad(CWolfMap *map, const char *path);
 void CWFree(CWolfMap *map);
+
+uint16_t CWLevelGetTile(
+	const CWLevel *level, const int planeIndex, const int x, const int y);
