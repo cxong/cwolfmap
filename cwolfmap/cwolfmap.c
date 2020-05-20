@@ -31,14 +31,14 @@ int CWLoad(CWolfMap *map, const char *path)
 	}
 
 	sprintf(pathBuf, "%s/AUDIOHED.WL1", path);
-	err = CWAudioLoadHead(&map->audioHead, pathBuf);
+	err = CWAudioLoadHead(&map->audio.head, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
 	}
 
 	sprintf(pathBuf, "%s/AUDIOT.WL1", path);
-	err = CWAudioLoadAudioT(pathBuf);
+	err = CWAudioLoadAudioT(&map->audio, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
@@ -204,7 +204,7 @@ void CWFree(CWolfMap *map)
 		LevelFree(&map->levels[i]);
 	}
 	free(map->levels);
-	CWAudioHeadFree(&map->audioHead);
+	CWAudioFree(&map->audio);
 	memset(map, 0, sizeof *map);
 }
 static void LevelFree(CWLevel *level)

@@ -41,7 +41,7 @@ typedef struct
 	CWMapHead mapHead;
 	CWLevel *levels;
 	int nLevels;
-	CWAudioHead audioHead;
+	CWAudio audio;
 } CWolfMap;
 
 int CWLoad(CWolfMap *map, const char *path);
