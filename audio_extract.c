@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 			goto bail;
 		}
 		char buf[256];
-		sprintf(buf, "%d.imf", i);
+		sprintf(buf, "%d.wlf", i);
 		FILE *f = fopen(buf, "wb");
 		if (f == NULL)
 		{

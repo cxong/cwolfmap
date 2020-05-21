@@ -20,5 +20,6 @@ int CWAudioLoadAudioT(CWAudio *audio, const char *path);
 
 void CWAudioFree(CWAudio *audio);
 
+// http://www.vgmpf.com/Wiki/index.php?title=IMF
 int CWAudioGetMusic(
 	const CWAudio *audio, const int i, const char **data, int *len);
