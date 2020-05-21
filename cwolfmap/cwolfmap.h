@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "audio.h"
+#include "vswap.h"
 
 #define CW_LEVELS 100
 #pragma pack(push, 1)
@@ -42,6 +43,7 @@ typedef struct
 	CWLevel *levels;
 	int nLevels;
 	CWAudio audio;
+	CWVSwap vswap;
 } CWolfMap;
 
 int CWLoad(CWolfMap *map, const char *path);

@@ -44,6 +44,13 @@ int CWLoad(CWolfMap *map, const char *path)
 		goto bail;
 	}
 
+	sprintf(pathBuf, "%s/VSWAP.WL1", path);
+	err = CWVSwapLoad(&map->vswap, pathBuf);
+	if (err != 0)
+	{
+		goto bail;
+	}
+
 bail:
 	return err;
 }
@@ -205,6 +212,7 @@ void CWFree(CWolfMap *map)
 	}
 	free(map->levels);
 	CWAudioFree(&map->audio);
+	CWVSwapFree(&map->vswap);
 	memset(map, 0, sizeof *map);
 }
 static void LevelFree(CWLevel *level)

@@ -34,7 +34,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	printf("Loaded %d sounds\n", map.audioHead.nOffsets);
+	printf("Loaded %d sounds\n", map.audio.head.nOffsets);
+
+	printf("Loaded %d VSWAP chunks\n", map.vswap.head.chunkCount);
+	printf("- sprite: %d\n", map.vswap.head.firstSprite);
+	printf("- sound: %d\n", map.vswap.head.firstSound);
 
 bail:
 	CWFree(&map);
