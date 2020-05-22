@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#define SND_RATE 7042
+
 #pragma pack(push, 1)
 typedef struct
 {

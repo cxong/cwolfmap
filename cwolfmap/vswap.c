@@ -7,7 +7,6 @@
 // http://gaarabis.free.fr/_sites/specs/wlspec_index.html
 
 #define PATH_MAX 4096
-#define SND_RATE 7042
 
 int CWVSwapLoad(CWVSwap *vswap, const char *path)
 {
