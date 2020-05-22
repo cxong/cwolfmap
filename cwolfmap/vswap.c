@@ -1,11 +1,13 @@
 #include "vswap.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 // http://gaarabis.free.fr/_sites/specs/wlspec_index.html
 
 #define PATH_MAX 4096
+#define SND_RATE 7042
 
 int CWVSwapLoad(CWVSwap *vswap, const char *path)
 {
@@ -20,29 +22,40 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	fseek(f, 0, SEEK_END);
 	const long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
-	if (fread(&vswap->head, 1, sizeof vswap->head, f) != sizeof vswap->head)
+	vswap->data = malloc(fsize);
+	if (fread(vswap->data, 1, fsize, f) != fsize)
 	{
 		err = -1;
-		fprintf(stderr, "Failed to read vswap head");
+		fprintf(stderr, "Failed to read chunk data");
 		goto bail;
 	}
-	vswap->chunkOffset = malloc(sizeof(uint32_t) * vswap->head.chunkCount);
-	if (fread(
-			vswap->chunkOffset, sizeof(uint32_t), vswap->head.chunkCount, f) !=
-		vswap->head.chunkCount)
+	memcpy(&vswap->head, vswap->data, sizeof vswap->head);
+	vswap->chunkOffset = vswap->data + sizeof vswap->head;
+	vswap->chunkLength = vswap->chunkOffset + vswap->head.chunkCount;
+
+	// Read sounds
+	// Sounds can span multiple chunks
+	for (int i = vswap->head.firstSound; i < vswap->head.chunkCount; i++)
 	{
-		err = -1;
-		fprintf(stderr, "Failed to read chunk offsets");
-		goto bail;
+		const int size = vswap->chunkLength[i];
+		if (size != 4096)
+		{
+			vswap->nSounds++;
+		}
 	}
-	vswap->chunkLength = malloc(sizeof(uint16_t) * vswap->head.chunkCount);
-	if (fread(
-			vswap->chunkLength, sizeof(uint16_t), vswap->head.chunkCount, f) !=
-		vswap->head.chunkCount)
+	vswap->sounds = calloc(vswap->nSounds, sizeof(CWVSwapSound));
+	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount; i++, sound++)
 	{
-		err = -1;
-		fprintf(stderr, "Failed to read chunk lengths");
-		goto bail;
+		const int off = vswap->chunkOffset[i];
+		int size = vswap->chunkLength[i];
+		vswap->sounds[sound].off = vswap->chunkOffset[i];
+		vswap->sounds[sound].len = size;
+		while (size == 4096)
+		{
+			i++;
+			size = vswap->chunkLength[i];
+			vswap->sounds[sound].len += size;
+		}
 	}
 
 bail:
@@ -55,6 +68,26 @@ bail:
 
 void CWVSwapFree(CWVSwap *vswap)
 {
-	free(vswap->chunkOffset);
-	free(vswap->chunkLength);
+	free(vswap->data);
+	free(vswap->sounds);
+}
+
+int CWVSwapGetNumSounds(const CWVSwap *vswap)
+{
+	return vswap->head.chunkCount - vswap->head.firstSound;
+}
+int CWVSwapGetSound(
+	const CWVSwap *vswap, const int i, const char **data, int *len)
+{
+	int err = 0;
+	if (vswap->sounds[i].off == 0)
+	{
+		err = -1;
+		goto bail;
+	}
+	*len = vswap->sounds[i].len;
+	*data = &vswap->data[vswap->sounds[i].off];
+
+bail:
+	return err;
 }
