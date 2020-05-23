@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #define SND_RATE 7042
+// Sounds are unsigned 8-bit mono PCM
 
 #pragma pack(push, 1)
 typedef struct
