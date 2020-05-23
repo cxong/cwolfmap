@@ -377,10 +377,15 @@ static const CWTile tileMap[] = {
 	CWTILE_AREA,
 };
 
+uint16_t CWLevelGetCh(
+	const CWLevel *level, const int planeIndex, const int x, const int y)
+{
+	const CWPlane *plane = &level->planes[planeIndex];
+	return plane->plane[x * level->header.height + y];
+}
 CWTile CWLevelGetTile(const CWLevel *level, const int x, const int y)
 {
-	const CWPlane *plane = &level->planes[0];
-	const uint16_t ch = plane->plane[x * level->header.height + y];
+	const uint16_t ch = CWLevelGetCh(level, 0, x, y);
 	if (ch < sizeof tileMap / sizeof tileMap[0])
 	{
 		return tileMap[ch];
@@ -389,8 +394,7 @@ CWTile CWLevelGetTile(const CWLevel *level, const int x, const int y)
 }
 CWEntity CWLevelGetEntity(const CWLevel *level, const int x, const int y)
 {
-	const CWPlane *plane = &level->planes[1];
-	const uint16_t ch = plane->plane[x * level->header.height + y];
+	const uint16_t ch = CWLevelGetCh(level, 1, x, y);
 	// TODO: map
 	return CWENT_UNKNOWN;
 }

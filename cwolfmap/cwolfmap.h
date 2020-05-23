@@ -149,5 +149,7 @@ typedef enum
 	CWENT_UNKNOWN,
 } CWEntity;
 
+uint16_t CWLevelGetCh(
+	const CWLevel *level, const int planeIndex, const int x, const int y);
 CWTile CWLevelGetTile(const CWLevel *level, const int x, const int y);
 CWEntity CWLevelGetEntity(const CWLevel *level, const int x, const int y);
