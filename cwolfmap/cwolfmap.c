@@ -223,6 +223,15 @@ static void LevelFree(CWLevel *level)
 	}
 }
 
+// http://gaarabis.free.fr/_sites/specs/wlspec_index.html
+
+uint16_t CWLevelGetCh(
+	const CWLevel *level, const int planeIndex, const int x, const int y)
+{
+	const CWPlane *plane = &level->planes[planeIndex];
+	return plane->plane[x * level->header.height + y];
+}
+
 static const CWTile tileMap[] = {
 	// 0-63
 	CWTILE_WALL,
@@ -328,15 +337,15 @@ static const CWTile tileMap[] = {
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
-		// 100
+	// 100
 	CWTILE_ELEVATOR_V,
 	CWTILE_ELEVATOR_H,
-		// 102-105
+	// 102-105
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
-		// 106-143
+	// 106-143
 	CWTILE_AREA,
 	CWTILE_AREA,
 	CWTILE_AREA,
@@ -377,21 +386,53 @@ static const CWTile tileMap[] = {
 	CWTILE_AREA,
 };
 
-uint16_t CWLevelGetCh(
-	const CWLevel *level, const int planeIndex, const int x, const int y)
+CWTile CWChToTile(const uint16_t ch)
 {
-	const CWPlane *plane = &level->planes[planeIndex];
-	return plane->plane[x * level->header.height + y];
-}
-CWTile CWLevelGetTile(const CWLevel *level, const int x, const int y)
-{
-	const uint16_t ch = CWLevelGetCh(level, 0, x, y);
 	if (ch < sizeof tileMap / sizeof tileMap[0])
 	{
 		return tileMap[ch];
 	}
 	return CWTILE_UNKNOWN;
 }
+
+static const CWWall wallMap[] = {
+	CWWALL_UNKNOWN,
+	CWWALL_GREY_BRICK_1,
+	CWWALL_GREY_BRICK_2,
+	CWWALL_GREY_BRICK_FLAG,
+	CWWALL_GREY_BRICK_HITLER,
+	CWWALL_CELL,
+	CWWALL_GREY_BRICK_EAGLE,
+	CWWALL_CELL_SKELETON,
+	CWWALL_BLUE_BRICK_1,
+	CWWALL_BLUE_BRICK_2,
+	CWWALL_WOOD_EAGLE,
+	CWWALL_WOOD_HITLER,
+	CWWALL_WOOD,
+	CWWALL_ENTRANCE,
+	CWWALL_UNKNOWN,
+	CWWALL_STEEL,
+	CWWALL_LANDSCAPE,
+	CWWALL_RED_BRICK,
+	CWWALL_RED_BRICK_SWASTIKA,
+	CWWALL_PURPLE,
+	CWWALL_RED_BRICK_FLAG,
+	CWWALL_ELEVATOR,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_PURPLE_BLOOD,
+};
+
+CWWall CWChToWall(const uint16_t ch)
+{
+	if (ch < sizeof wallMap / sizeof wallMap[0])
+	{
+		return wallMap[ch];
+	}
+	return CWWALL_UNKNOWN;
+}
+
 CWEntity CWLevelGetEntity(const CWLevel *level, const int x, const int y)
 {
 	const uint16_t ch = CWLevelGetCh(level, 1, x, y);

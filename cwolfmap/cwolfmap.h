@@ -149,7 +149,34 @@ typedef enum
 	CWENT_UNKNOWN,
 } CWEntity;
 
+typedef enum
+{
+	CWWALL_GREY_BRICK_1,
+	CWWALL_GREY_BRICK_2,
+	CWWALL_GREY_BRICK_FLAG,
+	CWWALL_GREY_BRICK_HITLER,
+	CWWALL_CELL,
+	CWWALL_GREY_BRICK_EAGLE,
+	CWWALL_CELL_SKELETON,
+	CWWALL_BLUE_BRICK_1,
+	CWWALL_BLUE_BRICK_2,
+	CWWALL_WOOD_EAGLE,
+	CWWALL_WOOD_HITLER,
+	CWWALL_WOOD,
+	CWWALL_ENTRANCE,
+	CWWALL_STEEL,
+	CWWALL_LANDSCAPE,
+	CWWALL_RED_BRICK,
+	CWWALL_RED_BRICK_SWASTIKA,
+	CWWALL_PURPLE,
+	CWWALL_RED_BRICK_FLAG,
+	CWWALL_ELEVATOR,
+	CWWALL_PURPLE_BLOOD,
+	CWWALL_UNKNOWN
+} CWWall;
+
 uint16_t CWLevelGetCh(
 	const CWLevel *level, const int planeIndex, const int x, const int y);
-CWTile CWLevelGetTile(const CWLevel *level, const int x, const int y);
+CWTile CWChToTile(const uint16_t ch);
+CWWall CWChToWall(const uint16_t ch);
 CWEntity CWLevelGetEntity(const CWLevel *level, const int x, const int y);

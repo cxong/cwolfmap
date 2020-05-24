@@ -7,110 +7,106 @@ static void PrintCh(const CWLevel *level, const int plane, const int x, const in
 	const uint16_t ch = CWLevelGetCh(level, plane, x, y);
 	if (plane == 0)
 	{
-		const CWTile tile = CWLevelGetTile(level, x, y);
+		const CWTile tile = CWChToTile(ch);
+		const CWWall wall = CWChToWall(ch);
 		switch (tile)
 		{
 		case CWTILE_WALL:
-			switch (ch)
+			switch (wall)
 			{
-			case 1:
+			case CWWALL_GREY_BRICK_1:
 				setBackgroundColor(GREY);
 				printf(" ");
 				break;
-			case 2:
+			case CWWALL_GREY_BRICK_2:
 				setBackgroundColor(GREY);
 				setColor(BLACK);
 				printf("#");
 				break;
-			case 3:
+			case CWWALL_GREY_BRICK_FLAG:
 				setBackgroundColor(GREY);
 				setColor(RED);
 				printf("=");
 				break;
-			case 4:
+			case CWWALL_GREY_BRICK_HITLER:
 				setBackgroundColor(GREY);
 				setColor(YELLOW);
 				printf("=");
 				break;
-			case 5:
+			case CWWALL_CELL:
 				setBackgroundColor(LIGHTBLUE);
 				setColor(BLACK);
 				printf("=");
 				break;
-			case 6:
+			case CWWALL_GREY_BRICK_EAGLE:
 				setBackgroundColor(GREY);
 				setColor(LIGHTCYAN);
 				printf("=");
 				break;
-			case 7:
+			case CWWALL_CELL_SKELETON:
 				setBackgroundColor(LIGHTBLUE);
 				setColor(WHITE);
 				printf("=");
 				break;
-			case 8:
+			case CWWALL_BLUE_BRICK_1:
 				setBackgroundColor(LIGHTBLUE);
 				printf(" ");
 				break;
-			case 9:
+			case CWWALL_BLUE_BRICK_2:
 				setBackgroundColor(LIGHTBLUE);
 				setColor(BLACK);
 				printf("#");
 				break;
-			case 10:
+			case CWWALL_WOOD_EAGLE:
 				setBackgroundColor(RED);
 				setColor(LIGHTCYAN);
 				printf("=");
 				break;
-			case 11:
+			case CWWALL_WOOD_HITLER:
 				setBackgroundColor(RED);
 				setColor(YELLOW);
 				printf("=");
 				break;
-			case 12:
+			case CWWALL_WOOD:
 				setBackgroundColor(RED);
 				printf(" ");
 				break;
-			case 13:
+			case CWWALL_ENTRANCE:
 				setBackgroundColor(LIGHTGREEN);
 				printf(" ");
 				break;
-			case 15:
+			case CWWALL_STEEL:
 				setBackgroundColor(LIGHTCYAN);
 				printf(" ");
 				break;
-			case 16:
+			case CWWALL_LANDSCAPE:
 				setBackgroundColor(LIGHTCYAN);
 				setColor(LIGHTGREEN);
 				printf("_");
 				break;
-			case 17:
+			case CWWALL_RED_BRICK:
 				setBackgroundColor(LIGHTRED);
 				printf(" ");
 				break;
-			case 18:
+			case CWWALL_RED_BRICK_SWASTIKA:
 				setBackgroundColor(LIGHTRED);
 				setColor(YELLOW);
 				printf("=");
 				break;
-			case 19:
+			case CWWALL_PURPLE:
 				setBackgroundColor(LIGHTMAGENTA);
 				printf(" ");
 				break;
-			case 20:
+			case CWWALL_RED_BRICK_FLAG:
 				setBackgroundColor(LIGHTRED);
 				setColor(LIGHTCYAN);
 				printf("=");
 				break;
-			case 21:
+			case CWWALL_ELEVATOR:
 				setBackgroundColor(YELLOW);
 				printf(" ");
 				break;
-			case 22:
-				setBackgroundColor(LIGHTRED);
-				setColor(LIGHTCYAN);
-				printf("=");
-				break;
-			case 25:
+			case CWWALL_PURPLE_BLOOD:
 				setBackgroundColor(LIGHTMAGENTA);
 				setColor(LIGHTRED);
 				printf("#");
