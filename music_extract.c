@@ -10,19 +10,18 @@ int main(int argc, char *argv[])
 	{
 		goto bail;
 	}
-	printf("Loaded %d sound tracks\n", map.audio.nSound);
-	for (int i = 0; i < map.audio.nSound; i++)
+	printf("Loaded %d music tracks\n", map.audio.nMusic);
+	for (int i = 0; i < map.audio.nMusic; i++)
 	{
 		const char *data;
 		int len;
-		err = CWAudioGetAdlibSound(&map.audio, i, &data, &len);
+		err = CWAudioGetMusic(&map.audio, i, &data, &len);
 		if (err != 0)
 		{
 			goto bail;
 		}
 		char buf[256];
-		// TODO: no player can play this file as-is
-		sprintf(buf, "AUD%05d", i);
+		sprintf(buf, "%d.wlf", i);
 		FILE *f = fopen(buf, "wb");
 		if (f == NULL)
 		{

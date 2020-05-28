@@ -62,6 +62,7 @@ int CWAudioLoadAudioT(CWAudio *audio, const char *path)
 		fprintf(stderr, "Failed to read audio data");
 		goto bail;
 	}
+	audio->nSound = LASTSOUND;
 	audio->nMusic = LASTMUSIC;
 
 bail:
@@ -76,6 +77,24 @@ void CWAudioFree(CWAudio *audio)
 {
 	CWAudioHeadFree(&audio->head);
 	free(audio->data);
+}
+
+int CWAudioGetAdlibSound(
+	const CWAudio *audio, const int i, const char **data, int *len)
+{
+	int err = 0;
+	const int off = audio->head.offsets[i + STARTADLIBSOUNDS];
+	*len = audio->head.offsets[i + STARTADLIBSOUNDS + 1] - off;
+	if (*len == 0)
+	{
+		fprintf(stderr, "No audio len for track %d\n", i);
+		err = -1;
+		goto bail;
+	}
+	*data = &audio->data[off];
+
+bail:
+	return err;
 }
 
 int CWAudioGetMusic(

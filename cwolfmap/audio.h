@@ -9,6 +9,7 @@ typedef struct
 typedef struct
 {
 	CWAudioHead head;
+	int nSound;
 	int nMusic;
 	char *data;
 } CWAudio;
@@ -21,5 +22,7 @@ int CWAudioLoadAudioT(CWAudio *audio, const char *path);
 void CWAudioFree(CWAudio *audio);
 
 // http://www.vgmpf.com/Wiki/index.php?title=IMF
+int CWAudioGetAdlibSound(
+	const CWAudio *audio, const int i, const char **data, int *len);
 int CWAudioGetMusic(
 	const CWAudio *audio, const int i, const char **data, int *len);

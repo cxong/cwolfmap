@@ -149,6 +149,7 @@ static void PrintCh(const CWLevel *level, const int plane, const int x, const in
 			setColor(GREY);
 			break;
 		case CWTILE_ELEVATOR_H:
+			// TODO: confirm H elevator doors
 			setColor(BROWN);
 			printf("-");
 			setColor(GREY);
