@@ -2,177 +2,326 @@
 #include <stdio.h>
 #include "rlutil.h"
 
-static void PrintCh(const CWLevel *level, const int plane, const int x, const int y)
+static void PrintCh(const CWLevel *level, const int x, const int y)
 {
-	const uint16_t ch = CWLevelGetCh(level, plane, x, y);
-	if (plane == 0)
+	uint16_t ch = CWLevelGetCh(level, 0, x, y);
+	// Structural
+	const CWTile tile = CWChToTile(ch);
+	const CWWall wall = CWChToWall(ch);
+	char c = ' ';
+	switch (tile)
 	{
-		const CWTile tile = CWChToTile(ch);
-		const CWWall wall = CWChToWall(ch);
-		switch (tile)
+	case CWTILE_WALL:
+		switch (wall)
 		{
-		case CWTILE_WALL:
-			switch (wall)
-			{
-			case CWWALL_GREY_BRICK_1:
-				setBackgroundColor(GREY);
-				printf(" ");
-				break;
-			case CWWALL_GREY_BRICK_2:
-				setBackgroundColor(GREY);
-				setColor(BLACK);
-				printf("#");
-				break;
-			case CWWALL_GREY_BRICK_FLAG:
-				setBackgroundColor(GREY);
-				setColor(RED);
-				printf("=");
-				break;
-			case CWWALL_GREY_BRICK_HITLER:
-				setBackgroundColor(GREY);
-				setColor(YELLOW);
-				printf("=");
-				break;
-			case CWWALL_CELL:
-				setBackgroundColor(LIGHTBLUE);
-				setColor(BLACK);
-				printf("=");
-				break;
-			case CWWALL_GREY_BRICK_EAGLE:
-				setBackgroundColor(GREY);
-				setColor(LIGHTCYAN);
-				printf("=");
-				break;
-			case CWWALL_CELL_SKELETON:
-				setBackgroundColor(LIGHTBLUE);
-				setColor(WHITE);
-				printf("=");
-				break;
-			case CWWALL_BLUE_BRICK_1:
-				setBackgroundColor(LIGHTBLUE);
-				printf(" ");
-				break;
-			case CWWALL_BLUE_BRICK_2:
-				setBackgroundColor(LIGHTBLUE);
-				setColor(BLACK);
-				printf("#");
-				break;
-			case CWWALL_WOOD_EAGLE:
-				setBackgroundColor(RED);
-				setColor(LIGHTCYAN);
-				printf("=");
-				break;
-			case CWWALL_WOOD_HITLER:
-				setBackgroundColor(RED);
-				setColor(YELLOW);
-				printf("=");
-				break;
-			case CWWALL_WOOD:
-				setBackgroundColor(RED);
-				printf(" ");
-				break;
-			case CWWALL_ENTRANCE:
-				setBackgroundColor(LIGHTGREEN);
-				printf(" ");
-				break;
-			case CWWALL_STEEL:
-				setBackgroundColor(LIGHTCYAN);
-				printf(" ");
-				break;
-			case CWWALL_LANDSCAPE:
-				setBackgroundColor(LIGHTCYAN);
-				setColor(LIGHTGREEN);
-				printf("_");
-				break;
-			case CWWALL_RED_BRICK:
-				setBackgroundColor(LIGHTRED);
-				printf(" ");
-				break;
-			case CWWALL_RED_BRICK_SWASTIKA:
-				setBackgroundColor(LIGHTRED);
-				setColor(YELLOW);
-				printf("=");
-				break;
-			case CWWALL_PURPLE:
-				setBackgroundColor(LIGHTMAGENTA);
-				printf(" ");
-				break;
-			case CWWALL_RED_BRICK_FLAG:
-				setBackgroundColor(LIGHTRED);
-				setColor(LIGHTCYAN);
-				printf("=");
-				break;
-			case CWWALL_ELEVATOR:
-				setBackgroundColor(YELLOW);
-				printf(" ");
-				break;
-			case CWWALL_PURPLE_BLOOD:
-				setBackgroundColor(LIGHTMAGENTA);
-				setColor(LIGHTRED);
-				printf("#");
-				break;
-			default:
-				printf("#");
-				break;
-			}
-			setBackgroundColor(BLACK);
-			setColor(GREY);
+		case CWWALL_GREY_BRICK_1:
+			setBackgroundColor(GREY);
 			break;
-		case CWTILE_DOOR_H:
-			setColor(GREY);
-			printf("-");
-			setColor(GREY);
+		case CWWALL_GREY_BRICK_2:
+			setBackgroundColor(GREY);
+			setColor(BLACK);
+			c = '#';
 			break;
-		case CWTILE_DOOR_V:
-			setColor(GREY);
-			printf("|");
-			setColor(GREY);
+		case CWWALL_GREY_BRICK_FLAG:
+			setBackgroundColor(GREY);
+			setColor(RED);
+			c = '=';
 			break;
-		case CWTILE_DOOR_GOLD_H:
+		case CWWALL_GREY_BRICK_HITLER:
+			setBackgroundColor(GREY);
 			setColor(YELLOW);
-			printf("-");
-			setColor(GREY);
+			c = '=';
 			break;
-		case CWTILE_DOOR_GOLD_V:
+		case CWWALL_CELL:
+			setBackgroundColor(LIGHTBLUE);
+			setColor(BLACK);
+			c = '=';
+			break;
+		case CWWALL_GREY_BRICK_EAGLE:
+			setBackgroundColor(GREY);
+			setColor(LIGHTCYAN);
+			c = '=';
+			break;
+		case CWWALL_CELL_SKELETON:
+			setBackgroundColor(LIGHTBLUE);
+			setColor(WHITE);
+			c = '=';
+			break;
+		case CWWALL_BLUE_BRICK_1:
+			setBackgroundColor(LIGHTBLUE);
+			break;
+		case CWWALL_BLUE_BRICK_2:
+			setBackgroundColor(LIGHTBLUE);
+			setColor(BLACK);
+			c = '#';
+			break;
+		case CWWALL_WOOD_EAGLE:
+			setBackgroundColor(RED);
+			setColor(LIGHTCYAN);
+			c = '=';
+			break;
+		case CWWALL_WOOD_HITLER:
+			setBackgroundColor(RED);
 			setColor(YELLOW);
-			printf("|");
-			setColor(GREY);
+			c = '=';
 			break;
-		case CWTILE_DOOR_SILVER_H:
-			setColor(CYAN);
-			printf("-");
-			setColor(GREY);
+		case CWWALL_WOOD:
+			setBackgroundColor(RED);
 			break;
-		case CWTILE_DOOR_SILVER_V:
-			setColor(CYAN);
-			printf("|");
-			setColor(GREY);
+		case CWWALL_ENTRANCE:
+			setBackgroundColor(LIGHTGREEN);
 			break;
-		case CWTILE_ELEVATOR_H:
-			// TODO: confirm H elevator doors
-			setColor(BROWN);
-			printf("-");
-			setColor(GREY);
+		case CWWALL_STEEL:
+			setBackgroundColor(LIGHTCYAN);
 			break;
-		case CWTILE_ELEVATOR_V:
-			setColor(BROWN);
-			printf("|");
-			setColor(GREY);
+		case CWWALL_LANDSCAPE:
+			setBackgroundColor(LIGHTCYAN);
+			setColor(LIGHTGREEN);
+			c = '_';
 			break;
-		case CWTILE_AREA:
-			printf(" ");
+		case CWWALL_RED_BRICK:
+			setBackgroundColor(LIGHTRED);
+			break;
+		case CWWALL_RED_BRICK_SWASTIKA:
+			setBackgroundColor(LIGHTRED);
+			setColor(YELLOW);
+			c = '=';
+			break;
+		case CWWALL_PURPLE:
+			setBackgroundColor(LIGHTMAGENTA);
+			break;
+		case CWWALL_RED_BRICK_FLAG:
+			setBackgroundColor(LIGHTRED);
+			setColor(LIGHTCYAN);
+			c = '=';
+			break;
+		case CWWALL_ELEVATOR:
+			setBackgroundColor(YELLOW);
+			break;
+		case CWWALL_PURPLE_BLOOD:
+			setBackgroundColor(LIGHTMAGENTA);
+			setColor(LIGHTRED);
+			c = '#';
 			break;
 		default:
-			printf("?");
+			c = '?';
 			break;
 		}
+		break;
+	case CWTILE_DOOR_H:
+		setColor(GREY);
+		c = '-';
+		break;
+	case CWTILE_DOOR_V:
+		setColor(GREY);
+		c = '|';
+		break;
+	case CWTILE_DOOR_GOLD_H:
+		setColor(YELLOW);
+		c = '-';
+		break;
+	case CWTILE_DOOR_GOLD_V:
+		setColor(YELLOW);
+		c = '|';
+		break;
+	case CWTILE_DOOR_SILVER_H:
+		setColor(CYAN);
+		c = '-';
+		break;
+	case CWTILE_DOOR_SILVER_V:
+		setColor(CYAN);
+		c = '|';
+		break;
+	case CWTILE_ELEVATOR_H:
+		// TODO: confirm H elevator doors
+		setColor(BROWN);
+		c = '-';
+		break;
+	case CWTILE_ELEVATOR_V:
+		setColor(BROWN);
+		c = '|';
+		break;
+	case CWTILE_AREA:
+		break;
+	default:
+		c = '?';
+		break;
 	}
-	else
+	// Entity
+	ch = CWLevelGetCh(level, 1, x, y);
+	const CWEntity entity = CWChToEntity(ch);
+	switch (entity)
 	{
-		const CWEntity entity = CWLevelGetEntity(level, x, y);
-		//printf("%c", (unsigned char)(entity % (255 - 31)) + 31);
-		printf(" ");
+	case CWENT_NONE:
+		break;
+	case CWENT_PLAYER_SPAWN_E:
+		setColor(LIGHTGREEN);
+		c = '>';
+		break;
+	case CWENT_WATER:
+		setColor(LIGHTBLUE);
+		c = 'O';
+		break;
+	case CWENT_OIL_DRUM:
+		setColor(LIGHTGREEN);
+		c = '|';
+		break;
+	case CWENT_TABLE_WITH_CHAIRS:
+		setColor(RED);
+		c = '#';
+		break;
+	case CWENT_FLOOR_LAMP:
+		setColor(MAGENTA);
+		c = '|';
+		break;
+	case CWENT_CHANDELIER:
+		setBackgroundColor(GREY);
+		setColor(YELLOW);
+		c = '+';
+		break;
+	case CWENT_DOG_FOOD:
+		setColor(RED);
+		c = '=';
+		break;
+	case CWENT_GREEN_PLANT:
+		setBackgroundColor(GREEN);
+		setColor(LIGHTGREEN);
+		c = '+';
+		break;
+	case CWENT_SKELETON:
+		setColor(WHITE);
+		c = '#';
+		break;
+	case CWENT_BROWN_PLANT:
+		setBackgroundColor(GREEN);
+		setColor(RED);
+		c = '+';
+		break;
+	case CWENT_VASE:
+		setColor(BLUE);
+		c = 'O';
+		break;
+	case CWENT_TABLE:
+		setColor(BROWN);
+		c = '#';
+		break;
+	case CWENT_CEILING_LIGHT_GREEN:
+		setBackgroundColor(GREY);
+		setColor(GREEN);
+		c = '+';
+		break;
+	case CWENT_ARMOR:
+		setColor(BLUE);
+		c = '|';
+		break;
+	case CWENT_BONES1:
+		setColor(BROWN);
+		c = 'o';
+		break;
+	case CWENT_BASKET:
+		setBackgroundColor(RED);
+		setColor(BLACK);
+		c = '+';
+		break;
+	case CWENT_FOOD:
+		setColor(LIGHTGREEN);
+		c = '=';
+		break;
+	case CWENT_MEDKIT:
+		setColor(LIGHTRED);
+		c = '=';
+		break;
+	case CWENT_AMMO:
+		setColor(CYAN);
+		c = '=';
+		break;
+	case CWENT_MACHINE_GUN:
+		setColor(CYAN);
+		c = 'O';
+		break;
+	case CWENT_CROSS:
+		setColor(LIGHTBLUE);
+		c = '*';
+		break;
+	case CWENT_CHALICE:
+		setColor(LIGHTMAGENTA);
+		c = '*';
+		break;
+	case CWENT_CHEST:
+		setColor(LIGHTCYAN);
+		c = '*';
+		break;
+	case CWENT_LIFE:
+		setColor(LIGHTBLUE);
+		c = '=';
+		break;
+	case CWENT_BARREL:
+		setColor(RED);
+		c = '|';
+		break;
+	case CWENT_WELL_WATER:
+		setBackgroundColor(GREY);
+		setColor(LIGHTBLUE);
+		c = '+';
+		break;
+	case CWENT_WELL:
+		setBackgroundColor(GREY);
+		setColor(BLACK);
+		c = '+';
+		break;
+	case CWENT_FLAG:
+		setColor(LIGHTRED);
+		c = '|';
+		break;
+	case CWENT_PUSHWALL:
+		setBackgroundColor(WHITE);
+		break;
+	case CWENT_DEAD_GUARD:
+		setColor(MAGENTA);
+		c = 'X';
+		break;
+	case CWENT_DOG_E:
+	case CWENT_DOG_NE:
+		setColor(BROWN);
+		c = '>';
+		break;
+	case CWENT_DOG_N:
+	case CWENT_DOG_NW:
+		setColor(BROWN);
+		c = '^';
+		break;
+	case CWENT_DOG_W:
+	case CWENT_DOG_SW:
+		setColor(BROWN);
+		c = '<';
+		break;
+	case CWENT_DOG_S:
+	case CWENT_DOG_SE:
+		setColor(BROWN);
+		c = 'v';
+		break;
+	case CWENT_GUARD_E:
+		setColor(RED);
+		c = '>';
+		break;
+	case CWENT_GUARD_N:
+		setColor(RED);
+		c = '^';
+		break;
+	case CWENT_GUARD_W:
+		setColor(RED);
+		c = '<';
+		break;
+	case CWENT_GUARD_S:
+		setColor(RED);
+		c = 'v';
+		break;
+	default:
+		printf("");
+		break;
 	}
+	printf("%c", c);
+	resetColor();
 }
 
 int main(int argc, char *argv[])
@@ -185,25 +334,20 @@ int main(int argc, char *argv[])
 		goto bail;
 	}
 	printf("Loaded %d levels\n", map.nLevels);
+	saveDefaultColor();
 	CWLevel *level = map.levels;
 	for (int i = 0; i < map.nLevels; i++, level++)
 	{
 		printf(
 			"Level %d: %s (%dx%d)\n", i + 1, level->header.name,
 			level->header.width, level->header.height);
-		const CWPlane *plane = level->planes;
-		// Only care about the first two planes
-		for (int j = 0; j < 1; j++, plane++)
+		for (int x = 0; x < level->header.width; x++)
 		{
-			printf("- Plane %d\n", j);
-			for (int x = 0; x < level->header.width; x++)
+			for (int y = 0; y < level->header.height; y++)
 			{
-				for (int y = 0; y < level->header.height; y++)
-				{
-					PrintCh(level, j, x, y);
-				}
-				printf(" \n");
+				PrintCh(level, x, y);
 			}
+			printf(" \n");
 		}
 	}
 
