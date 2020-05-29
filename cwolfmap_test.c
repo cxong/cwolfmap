@@ -336,6 +336,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_PUSHWALL:
 		setBackgroundColor(WHITE);
 		break;
+	case CWENT_ENDGAME:
+		setColor(RED);
+		c = '$';
+		break;
 	case CWENT_DEAD_GUARD:
 		setColor(MAGENTA);
 		c = 'X';
@@ -396,6 +400,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_TURN_SW:
 	case CWENT_TURN_S:
 	case CWENT_TURN_SE:
+		break;
+	case CWENT_HANS:
+		setColor(LIGHTBLUE);
+		c = '$';
 		break;
 	default:
 		printf("");
