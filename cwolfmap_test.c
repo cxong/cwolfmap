@@ -252,7 +252,7 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		break;
 	case CWENT_BONES1:
 		setColor(BROWN);
-		c = 'o';
+		c = 'H';
 		break;
 	case CWENT_KEY_GOLD:
 		setColor(YELLOW);
@@ -295,13 +295,17 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(LIGHTCYAN);
 		c = '*';
 		break;
+	case CWENT_CROWN:
+		setColor(WHITE);
+		c = '*';
+		break;
 	case CWENT_LIFE:
 		setColor(LIGHTBLUE);
 		c = '=';
 		break;
 	case CWENT_BONES_BLOOD:
 		setColor(LIGHTRED);
-		c = 'O';
+		c = 'H';
 		break;
 	case CWENT_BARREL:
 		setColor(RED);
@@ -316,6 +320,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setBackgroundColor(GREY);
 		setColor(BLACK);
 		c = '+';
+		break;
+	case CWENT_POOL_OF_BLOOD:
+		setColor(LIGHTRED);
+		c = 'O';
 		break;
 	case CWENT_FLAG:
 		setColor(LIGHTRED);
