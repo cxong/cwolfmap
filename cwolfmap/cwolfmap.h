@@ -34,14 +34,7 @@ typedef struct
 typedef struct
 {
 	CWLevelHead header;
-	union {
-		CWPlane planes[NUM_PLANES];
-		struct
-		{
-			CWPlane structures;
-			CWPlane entities;
-		};
-	};
+	CWPlane planes[NUM_PLANES];
 } CWLevel;
 
 typedef struct

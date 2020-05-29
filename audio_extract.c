@@ -1,7 +1,7 @@
 #include "cwolfmap/cwolfmap.h"
 #include <stdio.h>
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	CWolfMap map;
 	int err = 0;

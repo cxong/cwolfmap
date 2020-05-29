@@ -20,7 +20,7 @@ typedef struct wavfile_header_s
 	int32_t Subchunk2Size;
 } wavfile_header_t;
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	CWolfMap map;
 	int err = 0;
@@ -53,9 +53,19 @@ int main(int argc, char *argv[])
 		}
 		const int subchunk1Size = 16;
 		const int32_t chunkSize = 4 + (8 + subchunk1Size) + (8 + len);
-		wavfile_header_t header = {
-			"RIFF",	  chunkSize, "WAVE", "fmt ", subchunk1Size, 1,	1,
-			SND_RATE, SND_RATE,	 1,		 8,		 "data",		len};
+		wavfile_header_t header = {{'R', 'I', 'F', 'F'},
+								   chunkSize,
+								   {'W', 'A', 'V', 'E'},
+								   {'f', 'm', 't', ' '},
+								   subchunk1Size,
+								   1,
+								   1,
+								   SND_RATE,
+								   SND_RATE,
+								   1,
+								   8,
+								   {'d', 'a', 't', 'a'},
+								   len};
 		if (fwrite(&header, sizeof header, 1, f) != 1)
 		{
 			printf("Failed to write sound header %s\n", buf);

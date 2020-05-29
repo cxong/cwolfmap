@@ -413,7 +413,7 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	resetColor();
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	CWolfMap map;
 	int err = 0;

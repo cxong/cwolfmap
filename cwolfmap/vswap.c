@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // http://gaarabis.free.fr/_sites/specs/wlspec_index.html
 
@@ -29,8 +30,8 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 		goto bail;
 	}
 	memcpy(&vswap->head, vswap->data, sizeof vswap->head);
-	vswap->chunkOffset = vswap->data + sizeof vswap->head;
-	vswap->chunkLength = vswap->chunkOffset + vswap->head.chunkCount;
+	vswap->chunkOffset = (uint32_t *)(vswap->data + sizeof vswap->head);
+	vswap->chunkLength = (uint16_t *)(vswap->chunkOffset + vswap->head.chunkCount);
 
 	// Read sounds
 	// Sounds can span multiple chunks
@@ -45,9 +46,9 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	vswap->sounds = calloc(vswap->nSounds, sizeof(CWVSwapSound));
 	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount; i++, sound++)
 	{
-		const int off = vswap->chunkOffset[i];
-		int size = vswap->chunkLength[i];
-		vswap->sounds[sound].off = vswap->chunkOffset[i];
+		const uint32_t off = vswap->chunkOffset[i];
+		uint16_t size = vswap->chunkLength[i];
+		vswap->sounds[sound].off = off;
 		vswap->sounds[sound].len = size;
 		while (size == 4096)
 		{

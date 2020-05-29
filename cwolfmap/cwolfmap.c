@@ -71,7 +71,7 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 	{
 		err = -1;
 		fprintf(
-			stderr, "Failed to read maphead; only read %d bytes of %d", read,
+			stderr, "Failed to read maphead; only read %zu bytes of %zu", read,
 			size);
 		goto bail;
 	}
@@ -92,11 +92,11 @@ bail:
 
 #define GAMEMAPS_MAGIC "TED5v1.0"
 
-static int LoadLevel(CWLevel *level, const char *data, const int off);
+static int LoadLevel(CWLevel *level, const unsigned char *data, const int off);
 static int LoadMapData(CWolfMap *map, const char *path)
 {
 	int err = 0;
-	char *buf = NULL;
+	unsigned char *buf = NULL;
 	FILE *f = fopen(path, "rb");
 	if (!f)
 	{
@@ -114,7 +114,7 @@ static int LoadMapData(CWolfMap *map, const char *path)
 		fprintf(stderr, "Failed to read file");
 		goto bail;
 	}
-	if (strncmp(buf, GAMEMAPS_MAGIC, strlen(GAMEMAPS_MAGIC)) != 0)
+	if (strncmp((char *)buf, GAMEMAPS_MAGIC, strlen(GAMEMAPS_MAGIC)) != 0)
 	{
 		err = -1;
 		fprintf(
@@ -122,7 +122,6 @@ static int LoadMapData(CWolfMap *map, const char *path)
 		goto bail;
 	}
 
-	const int32_t *ptr;
 	for (const int32_t *ptr = &map->mapHead.ptr[0]; *ptr > 0; ptr++)
 	{
 		map->nLevels++;
@@ -151,12 +150,12 @@ bail:
 	return err;
 }
 static int LoadPlane(
-	CWPlane *plane, const char *data, const uint32_t off, const uint16_t len,
-	char *buf, const int bufSize);
-static int LoadLevel(CWLevel *level, const char *data, const int off)
+	CWPlane *plane, const unsigned char *data, const uint32_t off,
+	unsigned char *buf, const int bufSize);
+static int LoadLevel(CWLevel *level, const unsigned char *data, const int off)
 {
 	int err = 0;
-	char *buf = NULL;
+	unsigned char *buf = NULL;
 	memcpy(&level->header, data + off, sizeof(level->header));
 	if (strncmp(level->header.signature, "!ID!", 4) != 0)
 	{
@@ -170,9 +169,8 @@ static int LoadLevel(CWLevel *level, const char *data, const int off)
 	buf = malloc(bufSize);
 	for (int i = 0; i < NUM_PLANES; i++)
 	{
-		const uint32_t off = *(&level->header.offPlane0 + i);
-		const uint16_t len = *(&level->header.lenPlane0 + i);
-		err = LoadPlane(&level->planes[i], data, off, len, buf, bufSize);
+		const uint32_t poff = *(&level->header.offPlane0 + i);
+		err = LoadPlane(&level->planes[i], data, poff, buf, bufSize);
 		if (err != 0)
 		{
 			goto bail;
@@ -184,8 +182,8 @@ bail:
 	return err;
 }
 static int LoadPlane(
-	CWPlane *plane, const char *data, const uint32_t off, const uint16_t len,
-	char *buf, const int bufSize)
+	CWPlane *plane, const unsigned char *data, const uint32_t off,
+	unsigned char *buf, const int bufSize)
 {
 	int err = 0;
 
@@ -197,7 +195,7 @@ static int LoadPlane(
 	ExpandCarmack(data + off, buf);
 	plane->len = bufSize;
 	plane->plane = malloc(bufSize);
-	ExpandRLEW(buf, plane->plane, MAGIC);
+	ExpandRLEW(buf, (unsigned char *)plane->plane, MAGIC);
 
 bail:
 	return err;
@@ -434,10 +432,25 @@ CWWall CWChToWall(const uint16_t ch)
 }
 
 static const CWEntity entityMap[] = {
-	CWENT_NONE,	   CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN,
-	CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN,
-	CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN,
-	CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN, CWENT_UNKNOWN,
+	CWENT_NONE,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
+	CWENT_UNKNOWN,
 	CWENT_PLAYER_SPAWN_N,
 	// 20
 	CWENT_PLAYER_SPAWN_E,

@@ -47,7 +47,6 @@ int CWAudioLoadAudioT(CWAudio *audio, const char *path)
 {
 	int err = 0;
 	FILE *f = fopen(path, "rb");
-	char *buf = NULL;
 	if (!f)
 	{
 		err = -1;
