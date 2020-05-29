@@ -258,6 +258,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(YELLOW);
 		c = 'X';
 		break;
+	case CWENT_BED:
+		setColor(RED);
+		c = '~';
+		break;
 	case CWENT_BASKET:
 		setBackgroundColor(RED);
 		setColor(BLACK);
