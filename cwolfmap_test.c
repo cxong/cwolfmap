@@ -162,6 +162,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(LIGHTGREEN);
 		c = '>';
 		break;
+	case CWENT_PLAYER_SPAWN_S:
+		setColor(LIGHTGREEN);
+		c = 'v';
+		break;
 	case CWENT_WATER:
 		setColor(LIGHTBLUE);
 		c = 'O';
@@ -235,6 +239,16 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_ARMOR:
 		setColor(BLUE);
 		c = '|';
+		break;
+	case CWENT_CAGE:
+		setBackgroundColor(LIGHTMAGENTA);
+		setColor(BLACK);
+		c = '+';
+		break;
+	case CWENT_CAGE_SKELETON:
+		setBackgroundColor(LIGHTMAGENTA);
+		setColor(WHITE);
+		c = '+';
 		break;
 	case CWENT_BONES1:
 		setColor(BROWN);
