@@ -154,6 +154,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	{
 	case CWENT_NONE:
 		break;
+	case CWENT_PLAYER_SPAWN_N:
+		setColor(LIGHTGREEN);
+		c = '^';
+		break;
 	case CWENT_PLAYER_SPAWN_E:
 		setColor(LIGHTGREEN);
 		c = '>';
@@ -179,6 +183,14 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(YELLOW);
 		c = '+';
 		break;
+	case CWENT_HANGING_SKELETON:
+		setColor(LIGHTCYAN);
+		c = '#';
+		break;
+	case CWENT_WHITE_COLUMN:
+		setColor(WHITE);
+		c = '|';
+		break;
 	case CWENT_DOG_FOOD:
 		setColor(RED);
 		c = '=';
@@ -191,6 +203,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_SKELETON:
 		setColor(WHITE);
 		c = '#';
+		break;
+	case CWENT_SINK:
+		setBackgroundColor(WHITE);
+		setColor(BLACK);
+		c = '+';
 		break;
 	case CWENT_BROWN_PLANT:
 		setBackgroundColor(GREEN);
@@ -210,6 +227,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(GREEN);
 		c = '+';
 		break;
+	case CWENT_UTENSILS_BROWN:
+		setBackgroundColor(CYAN);
+		setColor(RED);
+		c = '+';
+		break;
 	case CWENT_ARMOR:
 		setColor(BLUE);
 		c = '|';
@@ -217,6 +239,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_BONES1:
 		setColor(BROWN);
 		c = 'o';
+		break;
+	case CWENT_KEY_GOLD:
+		setColor(YELLOW);
+		c = 'X';
 		break;
 	case CWENT_BASKET:
 		setBackgroundColor(RED);
@@ -239,6 +265,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(CYAN);
 		c = 'O';
 		break;
+	case CWENT_CHAIN_GUN:
+		setColor(LIGHTCYAN);
+		c = 'O';
+		break;
 	case CWENT_CROSS:
 		setColor(LIGHTBLUE);
 		c = '*';
@@ -254,6 +284,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_LIFE:
 		setColor(LIGHTBLUE);
 		c = '=';
+		break;
+	case CWENT_BONES_BLOOD:
+		setColor(LIGHTRED);
+		c = 'O';
 		break;
 	case CWENT_BARREL:
 		setColor(RED);
@@ -281,22 +315,18 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		c = 'X';
 		break;
 	case CWENT_DOG_E:
-	case CWENT_DOG_NE:
 		setColor(BROWN);
 		c = '>';
 		break;
 	case CWENT_DOG_N:
-	case CWENT_DOG_NW:
 		setColor(BROWN);
 		c = '^';
 		break;
 	case CWENT_DOG_W:
-	case CWENT_DOG_SW:
 		setColor(BROWN);
 		c = '<';
 		break;
 	case CWENT_DOG_S:
-	case CWENT_DOG_SE:
 		setColor(BROWN);
 		c = 'v';
 		break;
@@ -315,6 +345,31 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_GUARD_S:
 		setColor(RED);
 		c = 'v';
+		break;
+	case CWENT_SS_E:
+		setColor(BLUE);
+		c = '>';
+		break;
+	case CWENT_SS_N:
+		setColor(BLUE);
+		c = '^';
+		break;
+	case CWENT_SS_W:
+		setColor(BLUE);
+		c = '<';
+		break;
+	case CWENT_SS_S:
+		setColor(BLUE);
+		c = 'v';
+		break;
+	case CWENT_TURN_E:
+	case CWENT_TURN_NE:
+	case CWENT_TURN_N:
+	case CWENT_TURN_NW:
+	case CWENT_TURN_W:
+	case CWENT_TURN_SW:
+	case CWENT_TURN_S:
+	case CWENT_TURN_SE:
 		break;
 	default:
 		printf("");
