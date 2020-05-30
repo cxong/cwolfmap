@@ -108,7 +108,7 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	const long fsize = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	buf = malloc(fsize);
-	if (fread(buf, 1, fsize, f) != fsize)
+	if (fread(buf, 1, fsize, f) != (size_t)fsize)
 	{
 		err = -1;
 		fprintf(stderr, "Failed to read file");

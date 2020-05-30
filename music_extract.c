@@ -14,7 +14,7 @@ int main(void)
 	for (int i = 0; i < map.audio.nMusic; i++)
 	{
 		const char *data;
-		int len;
+		size_t len;
 		err = CWAudioGetMusic(&map.audio, i, &data, &len);
 		if (err != 0)
 		{
@@ -35,7 +35,7 @@ int main(void)
 			goto bail;
 		}
 		fclose(f);
-		printf("Wrote file %s (len %d)\n", buf, len);
+		printf("Wrote file %s (len %zu)\n", buf, len);
 	}
 	// The files can be played via adplug e.g. https://www.wothke.ch/AdLibido/
 

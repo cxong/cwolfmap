@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 
 #define SND_RATE 7042
 // Sounds are unsigned 8-bit mono PCM
@@ -32,4 +33,4 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path);
 void CWVSwapFree(CWVSwap *vswap);
 
 int CWVSwapGetSound(
-	const CWVSwap *vswap, const int i, const char **data, int *len);
+	const CWVSwap *vswap, const int i, const char **data, size_t *len);

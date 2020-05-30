@@ -1,9 +1,10 @@
 #include <stdint.h>
+#include <string.h>
 
 typedef struct
 {
 	uint32_t *offsets;
-	int nOffsets;
+	size_t nOffsets;
 } CWAudioHead;
 
 typedef struct
@@ -23,6 +24,6 @@ void CWAudioFree(CWAudio *audio);
 
 // http://www.vgmpf.com/Wiki/index.php?title=IMF
 int CWAudioGetAdlibSound(
-	const CWAudio *audio, const int i, const char **data, int *len);
+	const CWAudio *audio, const int i, const char **data, size_t *len);
 int CWAudioGetMusic(
-	const CWAudio *audio, const int i, const char **data, int *len);
+	const CWAudio *audio, const int i, const char **data, size_t *len);

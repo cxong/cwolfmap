@@ -33,7 +33,7 @@ int main(void)
 	for (int i = 0; i < map.vswap.nSounds; i++)
 	{
 		const char *data;
-		int len;
+		size_t len;
 		err = CWVSwapGetSound(&map.vswap, i, &data, &len);
 		if (err != 0)
 		{
@@ -78,7 +78,7 @@ int main(void)
 			fclose(f);
 			continue;
 		}
-		printf("Wrote file %s (len %d)\n", buf, len);
+		printf("Wrote file %s (len %zu)\n", buf, len);
 		fclose(f);
 	}
 

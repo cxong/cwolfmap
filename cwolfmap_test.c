@@ -406,7 +406,6 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		c = '$';
 		break;
 	default:
-		printf("");
 		break;
 	}
 	printf("%c", c);
@@ -440,7 +439,7 @@ int main(void)
 		}
 	}
 
-	printf("Loaded %d sounds\n", map.audio.head.nOffsets);
+	printf("Loaded %zu sounds\n", map.audio.head.nOffsets);
 
 	printf("Loaded %d VSWAP chunks\n", map.vswap.head.chunkCount);
 	printf("- sprite: %d\n", map.vswap.head.firstSprite);

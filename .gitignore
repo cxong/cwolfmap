@@ -61,3 +61,10 @@ CMakeFiles/
 Debug/
 *.sln
 *.vcxproj*
+
+# VS Code
+.vscode/
+build/
+
+# Linux
+Makefile
