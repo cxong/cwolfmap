@@ -2,6 +2,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <SDL_mixer.h>
+#include "rlutil.h"
+
+#define SAMPLE_RATE 44100
+#define AUDIO_FMT AUDIO_S16
+#define AUDIO_CHANNELS 2
 
 typedef struct
 {
@@ -60,8 +65,7 @@ int main(void)
 	}
 	printf("Loaded %d VSWAP sounds\n", map.vswap.nSounds);
 
-	// TODO: support different output format
-	if (Mix_OpenAudio(SND_RATE, AUDIO_U8, 1, 1) != 0)
+	if (Mix_OpenAudio(SAMPLE_RATE, AUDIO_FMT, AUDIO_CHANNELS, 1024) != 0)
 	{
 		goto bail;
 	}
@@ -85,27 +89,32 @@ int main(void)
 		{
 			goto bail;
 		}
+		SDL_AudioCVT cvt;
+		SDL_BuildAudioCVT(
+			&cvt, AUDIO_U8, 1, SND_RATE, AUDIO_FMT, AUDIO_CHANNELS,
+			SAMPLE_RATE);
+		cvt.len = len;
+		cvt.buf = (Uint8 *)SDL_malloc(cvt.len * cvt.len_mult);
+		memcpy(cvt.buf, data, len);
+		SDL_ConvertAudio(&cvt);
 		Sound *sound = &sounds[nSounds - 1];
 		sprintf(sound->name, "SND%05d", i);
-		sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
+		sound->snd = Mix_QuickLoad_RAW(cvt.buf, cvt.len_cvt);
 	}
 
+	for (int i = 0; i < nSounds; i++)
+	{
+		printf("%c: %s\n", itoc(i), sounds[i].name);
+	}
+	printf("Choose sound to play: ");
 	for (;;)
 	{
-		for (int i = 0; i < nSounds; i++)
-		{
-			printf("%c: %s\n", itoc(i), sounds[i].name);
-		}
-		printf("Choose sound to play: ");
-		int cmd = ctoi(getchar());
+		int cmd = ctoi(getch());
 		if (cmd == -1)
 		{
 			break;
 		}
 		Mix_PlayChannel(-1, sounds[cmd].snd, 0);
-		// Clear input buf
-		while ((cmd = getchar()) != '\n' && cmd != EOF)
-			;
 	}
 
 bail:

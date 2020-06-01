@@ -38,7 +38,7 @@ add_executable(music_extract music_extract.c)
 target_link_libraries(music_extract cwolfmap)
 
 add_executable(vswap_sound_extract vswap_sound_extract.c)
-target_link_libraries(vswap_sound_extract cwolfmap)
+target_link_libraries(vswap_sound_extract cwolfmap SDL2::SDL2 SDL2::SDL2main SDL2::SDL2_mixer)
 
-add_executable(vswap_sound_play vswap_sound_play.c)
+add_executable(vswap_sound_play vswap_sound_play.c rlutil.h)
 target_link_libraries(vswap_sound_play cwolfmap SDL2::SDL2 SDL2::SDL2main SDL2::SDL2_mixer)
