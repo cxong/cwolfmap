@@ -42,6 +42,7 @@ before_script:
   - export CTEST_OUTPUT_ON_FAILURE=1
 
 script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh macosx/install-sdl2.sh ; fi
   - cmake -Wno-dev .
   - make -j2
 
