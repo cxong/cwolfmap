@@ -55,6 +55,7 @@ dkms.conf
 cmake_install.cmake
 CMakeCache.txt
 CMakeFiles/
+CMakeScripts/
 
 # Visual studio
 .vs/
@@ -68,3 +69,6 @@ build/
 
 # Linux
 Makefile
+
+# Xcode
+*.xcodeproj/
