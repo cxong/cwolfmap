@@ -80,7 +80,7 @@ static int extract_sound(const CWolfMap *map, const int i)
 		printf("Failed to write sound header %s\n", buf);
 		goto bail;
 	}
-	if (fwrite(cvt.buf, 1, cvt.len_cvt, f) != cvt.len_cvt)
+	if ((int)fwrite(cvt.buf, 1, cvt.len_cvt, f) != cvt.len_cvt)
 	{
 		printf("Failed to write sound data %s\n", buf);
 		goto bail;
