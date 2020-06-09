@@ -1,8 +1,8 @@
 #include "cwolfmap/cwolfmap.h"
+#include "rlutil.h"
+#include <SDL_mixer.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <SDL_mixer.h>
-#include "rlutil.h"
 
 #define SAMPLE_RATE 44100
 #define AUDIO_FMT AUDIO_S16
@@ -52,13 +52,21 @@ static int ctoi(const int c)
 	return -1;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	CWolfMap map;
 	Sound *sounds = NULL;
 	int nSounds = 0;
 	int err = 0;
-	err = CWLoad(&map, "WOLF3D");
+	if (argc == 2)
+	{
+		err = CWLoad(&map, argv[1]);
+	}
+	else
+	{
+		err = CWLoad(&map, "WOLF3D");
+	}
+
 	if (err != 0)
 	{
 		goto bail;

@@ -2,6 +2,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#include <io.h>
+#define access _access
+/* Values for the second argument to access.
+   These may be OR'd together.  */
+#define R_OK 4 /* Test for read permission.  */
+#define W_OK 2 /* Test for write permission.  */
+#define F_OK 0 /* Test for existence.  */
+#else
+#include <sys/time.h>
+#include <unistd.h>
+#endif
 
 #include "expand.h"
 
@@ -16,35 +29,42 @@ int CWLoad(CWolfMap *map, const char *path)
 	char pathBuf[PATH_MAX];
 	int err;
 
-	sprintf(pathBuf, "%s/MAPHEAD.WL1", path);
+	const char *ext = "WL1";
+	sprintf(pathBuf, "%s/MAPHEAD.WL6", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		ext = "WL6";
+	}
+
+	sprintf(pathBuf, "%s/MAPHEAD.%s", path, ext);
 	err = LoadMapHead(map, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
 	}
 
-	sprintf(pathBuf, "%s/GAMEMAPS.WL1", path);
+	sprintf(pathBuf, "%s/GAMEMAPS.%s", path, ext);
 	err = LoadMapData(map, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
 	}
 
-	sprintf(pathBuf, "%s/AUDIOHED.WL1", path);
+	sprintf(pathBuf, "%s/AUDIOHED.%s", path, ext);
 	err = CWAudioLoadHead(&map->audio.head, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
 	}
 
-	sprintf(pathBuf, "%s/AUDIOT.WL1", path);
+	sprintf(pathBuf, "%s/AUDIOT.%s", path, ext);
 	err = CWAudioLoadAudioT(&map->audio, pathBuf);
 	if (err != 0)
 	{
 		goto bail;
 	}
 
-	sprintf(pathBuf, "%s/VSWAP.WL1", path);
+	sprintf(pathBuf, "%s/VSWAP.%s", path, ext);
 	err = CWVSwapLoad(&map->vswap, pathBuf);
 	if (err != 0)
 	{
