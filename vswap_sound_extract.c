@@ -102,7 +102,14 @@ int main(int argc, char *argv[])
 	(void)argv;
 	CWolfMap map;
 	int err = 0;
-	err = CWLoad(&map, "WOLF3D");
+	if (argc == 2)
+	{
+		err = CWLoad(&map, argv[1]);
+	}
+	else
+	{
+		err = CWLoad(&map, "WOLF3D");
+	}
 	if (err != 0)
 	{
 		goto bail;
