@@ -15,20 +15,20 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		switch (wall)
 		{
 		case CWWALL_GREY_BRICK_1:
-			setBackgroundColor(GREY);
+			setBackgroundColor(DARKGREY);
 			break;
 		case CWWALL_GREY_BRICK_2:
-			setBackgroundColor(GREY);
+			setBackgroundColor(DARKGREY);
 			setColor(BLACK);
 			c = '#';
 			break;
 		case CWWALL_GREY_BRICK_FLAG:
-			setBackgroundColor(GREY);
+			setBackgroundColor(DARKGREY);
 			setColor(RED);
 			c = '=';
 			break;
 		case CWWALL_GREY_BRICK_HITLER:
-			setBackgroundColor(GREY);
+			setBackgroundColor(DARKGREY);
 			setColor(YELLOW);
 			c = '=';
 			break;
@@ -38,7 +38,7 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 			c = '=';
 			break;
 		case CWWALL_GREY_BRICK_EAGLE:
-			setBackgroundColor(GREY);
+			setBackgroundColor(DARKGREY);
 			setColor(LIGHTCYAN);
 			c = '=';
 			break;
@@ -71,6 +71,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		case CWWALL_ENTRANCE:
 			setBackgroundColor(LIGHTGREEN);
 			break;
+		case CWWALL_STEEL_SIGN:
+			setBackgroundColor(LIGHTCYAN);
+			setColor(BLACK);
+			c = '=';
+			break;
 		case CWWALL_STEEL:
 			setBackgroundColor(LIGHTCYAN);
 			break;
@@ -98,10 +103,66 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		case CWWALL_ELEVATOR:
 			setBackgroundColor(YELLOW);
 			break;
+		case CWWALL_WOOD_IRON_CROSS:
+			setBackgroundColor(RED);
+			setColor(DARKGREY);
+			c = '=';
+			break;
+		case CWWALL_DIRTY_BRICK_1:
+			setBackgroundColor(DARKGREY);
+			setColor(GREEN);
+			c = '=';
+			break;
+		case CWWALL_DIRTY_BRICK_2:
+			setBackgroundColor(DARKGREY);
+			setColor(GREEN);
+			c = '#';
+			break;
+		case CWWALL_GREY_BRICK_3:
+			setBackgroundColor(DARKGREY);
+			setColor(GREY);
+			c = '=';
+			break;
 		case CWWALL_PURPLE_BLOOD:
 			setBackgroundColor(LIGHTMAGENTA);
 			setColor(LIGHTRED);
 			c = '#';
+			break;
+		case CWWALL_GREY_BRICK_SIGN:
+			setBackgroundColor(GREY);
+			setColor(BLACK);
+			c = '#';
+			break;
+		case CWWALL_BROWN_WEAVE:
+			setBackgroundColor(BROWN);
+			break;
+		case CWWALL_BROWN_WEAVE_BLOOD_2:
+			setBackgroundColor(BROWN);
+			setColor(MAGENTA);
+			c = '=';
+			break;
+		case CWWALL_GREY_WALL_1:
+			setBackgroundColor(GREY);
+			break;
+		case CWWALL_GREY_WALL_VENT:
+			setBackgroundColor(GREY);
+			setColor(BLACK);
+			c = '=';
+			break;
+		case CWWALL_MULTICOLOR_BRICK:
+			setBackgroundColor(LIGHTRED);
+			setColor(LIGHTBLUE);
+			c = '=';
+			break;
+		case CWWALL_GREY_WALL_2:
+			setBackgroundColor(GREY);
+			setColor(BLACK);
+			c = '#';
+			break;
+		case CWWALL_GREY_WALL_HITLER:
+			setBackgroundColor(GREY);
+			setColor(YELLOW);
+			c = '=';
 			break;
 		default:
 			c = '?';
@@ -133,7 +194,6 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		c = '|';
 		break;
 	case CWTILE_ELEVATOR_H:
-		// TODO: confirm H elevator doors
 		setColor(BROWN);
 		c = '-';
 		break;
@@ -165,6 +225,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_PLAYER_SPAWN_S:
 		setColor(LIGHTGREEN);
 		c = 'v';
+		break;
+	case CWENT_PLAYER_SPAWN_W:
+		setColor(LIGHTGREEN);
+		c = '<';
 		break;
 	case CWENT_WATER:
 		setColor(LIGHTBLUE);
@@ -258,6 +322,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(YELLOW);
 		c = 'X';
 		break;
+	case CWENT_KEY_SILVER:
+		setColor(LIGHTCYAN);
+		c = 'X';
+		break;
 	case CWENT_BED:
 		setColor(RED);
 		c = '~';
@@ -333,6 +401,38 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(LIGHTRED);
 		c = '|';
 		break;
+	case CWENT_AARDWOLF:
+		setBackgroundColor(LIGHTGREEN);
+		break;
+	case CWENT_BONES2:
+		setColor(GREY);
+		c = 'H';
+		break;
+	case CWENT_BONES3:
+		setColor(YELLOW);
+		c = 'H';
+		break;
+	case CWENT_BONES4:
+		setColor(WHITE);
+		c = 'H';
+		break;
+	case CWENT_UTENSILS_BLUE:
+		setBackgroundColor(CYAN);
+		setColor(LIGHTBLUE);
+		c = '+';
+		break;
+	case CWENT_STOVE:
+		setColor(GREY);
+		c = '#';
+		break;
+	case CWENT_RACK:
+		setColor(RED);
+		c = '#';
+		break;
+	case CWENT_VINES:
+		setColor(GREEN);
+		c = '#';
+		break;
 	case CWENT_PUSHWALL:
 		setBackgroundColor(WHITE);
 		break;
@@ -392,6 +492,22 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(BLUE);
 		c = 'v';
 		break;
+	case CWENT_MUTANT_E:
+		setColor(GREEN);
+		c = '>';
+		break;
+	case CWENT_MUTANT_N:
+		setColor(GREEN);
+		c = '^';
+		break;
+	case CWENT_MUTANT_W:
+		setColor(GREEN);
+		c = '<';
+		break;
+	case CWENT_MUTANT_S:
+		setColor(GREEN);
+		c = 'v';
+		break;
 	case CWENT_TURN_E:
 	case CWENT_TURN_NE:
 	case CWENT_TURN_N:
@@ -401,11 +517,16 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_TURN_S:
 	case CWENT_TURN_SE:
 		break;
+	case CWENT_SCHABBS:
+		setColor(LIGHTMAGENTA);
+		c = '$';
+		break;
 	case CWENT_HANS:
 		setColor(LIGHTBLUE);
 		c = '$';
 		break;
 	default:
+		c = '?';
 		break;
 	}
 	printf("%c", c);
