@@ -146,6 +146,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 			setColor(LIGHTMAGENTA);
 			c = '=';
 			break;
+		case CWWALL_BROWN_WEAVE_BLOOD_1:
+			setBackgroundColor(BROWN);
+			setColor(LIGHTRED);
+			c = '=';
+			break;
 		case CWWALL_STAINED_GLASS:
 			setBackgroundColor(GREY);
 			setColor(LIGHTGREEN);
@@ -182,6 +187,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		case CWWALL_BLUE_WALL:
 			setBackgroundColor(LIGHTBLUE);
 			break;
+		case CWWALL_BLUE_BRICK_SIGN:
+			setBackgroundColor(BLUE);
+			setColor(YELLOW);
+			c = '=';
+			break;
 		case CWWALL_BROWN_MARBLE_1:
 			setBackgroundColor(RED);
 			setColor(BROWN);
@@ -192,6 +202,16 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 			setColor(LIGHTBLUE);
 			c = '=';
 			break;
+		case CWWALL_BROWN_STONE_1:
+			setBackgroundColor(BROWN);
+			setColor(BLACK);
+			c = '#';
+			break;
+		case CWWALL_BROWN_STONE_2:
+			setBackgroundColor(BROWN);
+			setColor(RED);
+			c = '#';
+			break;
 		case CWWALL_BROWN_MARBLE_2:
 			setBackgroundColor(GREEN);
 			setColor(RED);
@@ -201,6 +221,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 			setBackgroundColor(LIGHTCYAN);
 			setColor(RED);
 			c = '_';
+			break;
+		case CWWALL_WOOD_PANEL:
+			setBackgroundColor(RED);
+			setColor(BROWN);
+			c = '#';
 			break;
 		case CWWALL_GREY_WALL_HITLER:
 			setBackgroundColor(GREY);
@@ -582,6 +607,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		break;
 	case CWENT_HITLER:
 		setColor(LIGHTCYAN);
+		c = '$';
+		break;
+	case CWENT_FETTGESICHT:
+		setColor(LIGHTGREEN);
 		c = '$';
 		break;
 	case CWENT_SCHABBS:
