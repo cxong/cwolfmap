@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "rlutil.h"
 
-static void PrintCh(const CWLevel *level, const int x, const int y)
+static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapType type)
 {
 	uint16_t ch = CWLevelGetCh(level, 0, x, y);
 	// Structural
@@ -224,13 +224,48 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 			break;
 		case CWWALL_WOOD_PANEL:
 			setBackgroundColor(RED);
-			setColor(BROWN);
+			setColor(YELLOW);
 			c = '#';
 			break;
 		case CWWALL_GREY_WALL_HITLER:
 			setBackgroundColor(GREY);
 			setColor(YELLOW);
 			c = '=';
+			break;
+		case CWWALL_STONE_WALL_1:
+			setBackgroundColor(RED);
+			setColor(GREEN);
+			c = '#';
+			break;
+		case CWWALL_STONE_WALL_2:
+			setBackgroundColor(RED);
+			setColor(BROWN);
+			c = '#';
+			break;
+		case CWWALL_STONE_WALL_WREATH:
+			setBackgroundColor(RED);
+			setColor(LIGHTRED);
+			c = '#';
+			break;
+		case CWWALL_GREY_CONCRETE_LIGHT:
+			setBackgroundColor(DARKGREY);
+			setColor(RED);
+			c = '#';
+			break;
+		case CWWALL_GREY_CONCRETE_DARK:
+			setBackgroundColor(DARKGREY);
+			setColor(BROWN);
+			c = '#';
+			break;
+		case CWWALL_CONCRETE:
+			setBackgroundColor(GREY);
+			setColor(DARKGREY);
+			c = '#';
+			break;
+		case CWWALL_PURPLE_BRICK:
+			setBackgroundColor(LIGHTMAGENTA);
+			setColor(BLACK);
+			c = '#';
 			break;
 		default:
 			c = '?';
@@ -469,8 +504,18 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(LIGHTRED);
 		c = '|';
 		break;
-	case CWENT_AARDWOLF:
-		setBackgroundColor(LIGHTGREEN);
+	case CWENT_CEILING_LIGHT_RED_AARDWOLF:
+		if (type == CWMAPTYPE_WL6)
+		{
+			setBackgroundColor(LIGHTGREEN);
+		}
+		else
+		{
+			setBackgroundColor(GREY);
+			setColor(LIGHTRED);
+			c = '+';
+			break;
+		}
 		break;
 	case CWENT_BONES2:
 		setColor(GREY);
@@ -500,6 +545,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_VINES:
 		setColor(GREEN);
 		c = '#';
+		break;
+	case CWENT_AMMO_BOX:
+		setColor(CYAN);
+		c = 'H';
 		break;
 	case CWENT_PUSHWALL:
 		setBackgroundColor(WHITE);
@@ -681,7 +730,7 @@ int main(int argc, char *argv[])
 		{
 			for (int y = 0; y < level->header.height; y++)
 			{
-				PrintCh(level, x, y);
+				PrintCh(level, x, y, map.type);
 			}
 			printf(" \n");
 		}

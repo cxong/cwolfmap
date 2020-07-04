@@ -30,10 +30,18 @@ int CWLoad(CWolfMap *map, const char *path)
 	int err;
 
 	const char *ext = "WL1";
+	map->type = CWMAPTYPE_WL1;
 	sprintf(pathBuf, "%s/MAPHEAD.WL6", path);
 	if (access(pathBuf, F_OK) != -1)
 	{
 		ext = "WL6";
+		map->type = CWMAPTYPE_WL6;
+	}
+	sprintf(pathBuf, "%s/MAPHEAD.SOD", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		ext = "SOD";
+		map->type = CWMAPTYPE_SOD;
 	}
 
 	sprintf(pathBuf, "%s/MAPHEAD.%s", path, ext);
@@ -468,6 +476,28 @@ static const CWWall wallMap[] = {
 	CWWALL_BROWN_MARBLE_FLAG,
 	CWWALL_WOOD_PANEL,
 	CWWALL_GREY_WALL_HITLER,
+	// 50
+	CWWALL_STONE_WALL_1,
+	CWWALL_STONE_WALL_2,
+	CWWALL_STONE_WALL_WREATH,
+	CWWALL_UNKNOWN,
+	CWWALL_GREY_CONCRETE_LIGHT,
+	CWWALL_GREY_CONCRETE_DARK,
+	CWWALL_UNKNOWN,
+	CWWALL_CONCRETE,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	// 60
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_PURPLE_BRICK,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
+	CWWALL_UNKNOWN,
 };
 
 CWWall CWChToWall(const uint16_t ch)
@@ -548,7 +578,7 @@ static const CWEntity entityMap[] = {
 	CWENT_WELL,
 	CWENT_POOL_OF_BLOOD,
 	CWENT_FLAG,
-	CWENT_AARDWOLF,
+	CWENT_CEILING_LIGHT_RED_AARDWOLF,
 	CWENT_BONES2,
 	CWENT_BONES3,
 	CWENT_BONES4,
@@ -558,7 +588,7 @@ static const CWEntity entityMap[] = {
 	// 70
 	CWENT_VINES,
 	CWENT_UNKNOWN,
-	CWENT_UNKNOWN,
+	CWENT_AMMO_BOX,
 	CWENT_UNKNOWN,
 	CWENT_UNKNOWN,
 	CWENT_UNKNOWN,
