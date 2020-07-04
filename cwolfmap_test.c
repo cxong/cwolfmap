@@ -267,9 +267,29 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 			setColor(BROWN);
 			c = '#';
 			break;
+		case CWWALL_BLOOD_WALL:
+			setBackgroundColor(LIGHTRED);
+			setColor(BLACK);
+			c = '#';
+			break;
 		case CWWALL_CONCRETE:
 			setBackgroundColor(GREY);
 			setColor(DARKGREY);
+			c = '#';
+			break;
+		case CWWALL_RAMPART_STONE_1:
+			setBackgroundColor(CYAN);
+			setColor(GREY);
+			c = '#';
+			break;
+		case CWWALL_RAMPART_STONE_2:
+			setBackgroundColor(CYAN);
+			setColor(DARKGREY);
+			c = '#';
+			break;
+		case CWWALL_ELEVATOR_WALL:
+			setBackgroundColor(YELLOW);
+			setColor(LIGHTMAGENTA);
 			c = '#';
 			break;
 		case CWWALL_BROWN_CONCRETE:
@@ -390,10 +410,18 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(WHITE);
 		c = '#';
 		break;
-	case CWENT_SINK:
-		setBackgroundColor(WHITE);
-		setColor(BLACK);
-		c = '+';
+	case CWENT_SINK_SKULLS_ON_STICK:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setColor(LIGHTMAGENTA);
+			c = '#';
+		}
+		else
+		{
+			setBackgroundColor(WHITE);
+			setColor(BLACK);
+			c = '+';
+		}
 		break;
 	case CWENT_BROWN_PLANT:
 		setBackgroundColor(GREEN);
@@ -413,10 +441,19 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(GREEN);
 		c = '+';
 		break;
-	case CWENT_UTENSILS_BROWN:
-		setBackgroundColor(CYAN);
-		setColor(RED);
-		c = '+';
+	case CWENT_UTENSILS_BROWN_CAGE_BLOODY_BONES:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setBackgroundColor(LIGHTMAGENTA);
+			setColor(LIGHTRED);
+			c = '+';
+		}
+		else
+		{
+			setBackgroundColor(CYAN);
+			setColor(RED);
+			c = '+';
+		}
 		break;
 	case CWENT_ARMOR:
 		setColor(BLUE);
@@ -444,9 +481,18 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(LIGHTCYAN);
 		c = 'X';
 		break;
-	case CWENT_BED:
-		setColor(RED);
-		c = '~';
+	case CWENT_BED_CAGE_SKULLS:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setBackgroundColor(LIGHTMAGENTA);
+			setColor(RED);
+			c = '+';
+		}
+		else
+		{
+			setColor(RED);
+			c = '~';
+		}
 		break;
 	case CWENT_BASKET:
 		setBackgroundColor(RED);
@@ -544,18 +590,44 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(WHITE);
 		c = 'H';
 		break;
-	case CWENT_UTENSILS_BLUE:
-		setBackgroundColor(CYAN);
-		setColor(LIGHTBLUE);
-		c = '+';
+	case CWENT_UTENSILS_BLUE_COW_SKULL:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setColor(MAGENTA);
+			c = '#';
+		}
+		else
+		{
+			setBackgroundColor(CYAN);
+			setColor(LIGHTBLUE);
+			c = '+';
+		}
 		break;
-	case CWENT_STOVE:
-		setColor(GREY);
-		c = '#';
+	case CWENT_STOVE_WELL_BLOOD:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setBackgroundColor(GREY);
+			setColor(RED);
+			c = '+';
+		}
+		else
+		{
+			setColor(GREY);
+			c = '#';
+		}
 		break;
-	case CWENT_RACK:
-		setColor(RED);
-		c = '#';
+	case CWENT_RACK_ANGEL_STATUE:
+		if (type == CWMAPTYPE_SOD)
+		{
+			setColor(CYAN);
+			c = '#';
+		}
+		else
+		{
+			setBackgroundColor(RED);
+			setColor(BLACK);
+			c = '#';
+		}
 		break;
 	case CWENT_VINES:
 		setColor(GREEN);
@@ -569,11 +641,27 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(CYAN);
 		c = 'H';
 		break;
+	case CWENT_TRUCK_REAR:
+		setColor(BLUE);
+		c = '#';
+		break;
+	case CWENT_SPEAR:
+		setColor(YELLOW);
+		c = '$';
+		break;
 	case CWENT_PUSHWALL:
 		setBackgroundColor(WHITE);
 		break;
 	case CWENT_ENDGAME:
 		setColor(RED);
+		c = '$';
+		break;
+	case CWENT_GHOST:
+		setColor(LIGHTCYAN);
+		c = '$';
+		break;
+	case CWENT_ANGEL:
+		setColor(LIGHTRED);
 		c = '$';
 		break;
 	case CWENT_DEAD_GUARD:
@@ -673,7 +761,19 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(GREEN);
 		c = '$';
 		break;
+	case CWENT_UBER_MUTANT:
+		setColor(LIGHTGREEN);
+		c = '$';
+		break;
+	case CWENT_BARNACLE_WILHELM:
+		setColor(LIGHTBLUE);
+		c = '$';
+		break;
 	case CWENT_ROBED_HITLER:
+		setColor(DARKGREY);
+		c = '$';
+		break;
+	case CWENT_DEATH_KNIGHT:
 		setColor(DARKGREY);
 		c = '$';
 		break;
