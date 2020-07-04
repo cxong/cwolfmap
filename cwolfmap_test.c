@@ -103,6 +103,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		case CWWALL_ELEVATOR:
 			setBackgroundColor(YELLOW);
 			break;
+		case CWWALL_DEAD_ELEVATOR:
+			setBackgroundColor(YELLOW);
+			setColor(LIGHTRED);
+			c = '=';
+			break;
 		case CWWALL_WOOD_IRON_CROSS:
 			setBackgroundColor(RED);
 			setColor(DARKGREY);
@@ -242,6 +247,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 			setColor(BROWN);
 			c = '#';
 			break;
+		case CWWALL_STONE_WALL_FLAG:
+			setBackgroundColor(RED);
+			setColor(LIGHTGREEN);
+			c = '#';
+			break;
 		case CWWALL_STONE_WALL_WREATH:
 			setBackgroundColor(RED);
 			setColor(LIGHTRED);
@@ -260,6 +270,11 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		case CWWALL_CONCRETE:
 			setBackgroundColor(GREY);
 			setColor(DARKGREY);
+			c = '#';
+			break;
+		case CWWALL_BROWN_CONCRETE:
+			setBackgroundColor(BROWN);
+			setColor(GREY);
 			c = '#';
 			break;
 		case CWWALL_PURPLE_BRICK:
@@ -546,6 +561,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 		setColor(GREEN);
 		c = '#';
 		break;
+	case CWENT_BROWN_COLUMN:
+		setColor(CYAN);
+		c = '|';
+		break;
 	case CWENT_AMMO_BOX:
 		setColor(CYAN);
 		c = 'H';
@@ -649,6 +668,10 @@ static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapT
 	case CWENT_TURN_SW:
 	case CWENT_TURN_S:
 	case CWENT_TURN_SE:
+		break;
+	case CWENT_TRANS:
+		setColor(GREEN);
+		c = '$';
 		break;
 	case CWENT_ROBED_HITLER:
 		setColor(DARKGREY);
