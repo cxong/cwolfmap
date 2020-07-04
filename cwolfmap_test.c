@@ -508,6 +508,22 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 		setColor(GREEN);
 		c = 'v';
 		break;
+	case CWENT_OFFICER_E:
+		setColor(GREY);
+		c = '>';
+		break;
+	case CWENT_OFFICER_N:
+		setColor(GREY);
+		c = '^';
+		break;
+	case CWENT_OFFICER_W:
+		setColor(GREY);
+		c = '<';
+		break;
+	case CWENT_OFFICER_S:
+		setColor(GREY);
+		c = 'v';
+		break;
 	case CWENT_TURN_E:
 	case CWENT_TURN_NE:
 	case CWENT_TURN_N:
@@ -517,6 +533,14 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_TURN_S:
 	case CWENT_TURN_SE:
 		break;
+	case CWENT_ROBED_HITLER:
+		setColor(DARKGREY);
+		c = '$';
+		break;
+	case CWENT_HITLER:
+		setColor(LIGHTCYAN);
+		c = '$';
+		break;
 	case CWENT_SCHABBS:
 		setColor(LIGHTMAGENTA);
 		c = '$';
@@ -524,6 +548,22 @@ static void PrintCh(const CWLevel *level, const int x, const int y)
 	case CWENT_HANS:
 		setColor(LIGHTBLUE);
 		c = '$';
+		break;
+	case CWENT_PACMAN_GHOST_RED:
+		setColor(LIGHTRED);
+		c = 'G';
+		break;
+	case CWENT_PACMAN_GHOST_YELLOW:
+		setColor(YELLOW);
+		c = 'G';
+		break;
+	case CWENT_PACMAN_GHOST_ROSE:
+		setColor(LIGHTMAGENTA);
+		c = 'G';
+		break;
+	case CWENT_PACMAN_GHOST_BLUE:
+		setColor(LIGHTBLUE);
+		c = 'G';
 		break;
 	default:
 		c = '?';
