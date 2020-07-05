@@ -95,15 +95,8 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 		goto bail;
 	}
 	const size_t size = sizeof map->mapHead;
-	const size_t read = fread((void *)&map->mapHead, 1, size, f);
-	if (read != size)
-	{
-		err = -1;
-		fprintf(
-			stderr, "Failed to read maphead; only read %zu bytes of %zu", read,
-			size);
-		goto bail;
-	}
+	// Read as many maps as we can; some versions of the game (SOD MP) truncate the headers
+	fread((void *)&map->mapHead, 1, size, f);
 	if (map->mapHead.magic != MAGIC)
 	{
 		err = -1;

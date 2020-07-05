@@ -35,7 +35,8 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 
 	// Read sounds
 	// Sounds can span multiple chunks
-	for (int i = vswap->head.firstSound; i < vswap->head.chunkCount; i++)
+	// Last chunk is not a sound
+	for (int i = vswap->head.firstSound; i < vswap->head.chunkCount - 1; i++)
 	{
 		const int size = vswap->chunkLength[i];
 		if (size != 4096)
@@ -44,7 +45,7 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 		}
 	}
 	vswap->sounds = calloc(vswap->nSounds, sizeof(CWVSwapSound));
-	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount; i++, sound++)
+	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount - 1; i++, sound++)
 	{
 		const uint32_t off = vswap->chunkOffset[i];
 		uint16_t size = vswap->chunkLength[i];
