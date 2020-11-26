@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "audio.h"
@@ -54,6 +55,7 @@ typedef struct
 	CWMapType type;
 } CWolfMap;
 
+bool CWIsMap(const char *path);
 int CWLoad(CWolfMap *map, const char *path);
 void CWFree(CWolfMap *map);
 

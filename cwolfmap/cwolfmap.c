@@ -22,6 +22,28 @@
 
 #define PATH_MAX 4096
 
+// Just check for presence of MAPHEAD
+bool CWIsMap(const char *path)
+{
+	char pathBuf[PATH_MAX];
+	sprintf(pathBuf, "%s/MAPHEAD.WL1", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		return true;
+	}
+	sprintf(pathBuf, "%s/MAPHEAD.WL6", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		return true;
+	}
+	sprintf(pathBuf, "%s/MAPHEAD.SOD", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		return true;
+	}
+	return false;
+}
+
 static int LoadMapHead(CWolfMap *map, const char *path);
 static int LoadMapData(CWolfMap *map, const char *path);
 int CWLoad(CWolfMap *map, const char *path)
