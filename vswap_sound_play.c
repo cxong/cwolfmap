@@ -122,6 +122,10 @@ int main(int argc, char *argv[])
 		{
 			break;
 		}
+		if (cmd >= nSounds)
+		{
+			continue;
+		}
 		Mix_PlayChannel(-1, sounds[cmd].snd, 0);
 	}
 
