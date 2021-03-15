@@ -1,8 +1,9 @@
 #include "cwolfmap/cwolfmap.h"
-#include <stdio.h>
 #include "rlutil.h"
+#include <stdio.h>
 
-static void PrintCh(const CWLevel *level, const int x, const int y, const CWMapType type)
+static void PrintCh(
+	const CWLevel *level, const int x, const int y, const CWMapType type)
 {
 	uint16_t ch = CWLevelGetCh(level, 0, x, y);
 	// Structural
@@ -849,9 +850,9 @@ int main(int argc, char *argv[])
 		printf(
 			"Level %d: %s (%dx%d)\n", i + 1, level->header.name,
 			level->header.width, level->header.height);
-		for (int x = 0; x < level->header.width; x++)
+		for (int y = 0; y < level->header.height; y++)
 		{
-			for (int y = 0; y < level->header.height; y++)
+			for (int x = 0; x < level->header.width; x++)
 			{
 				PrintCh(level, x, y, map.type);
 			}
