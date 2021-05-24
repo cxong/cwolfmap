@@ -612,7 +612,7 @@ static int num_lock = 0;
 static void *cur_chip = NULL;	/* current chip pointer */
 OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
 
-static signed int phase_modulation;	/* phase modulation input (SLOT 2) */
+signed int phase_modulation;	/* phase modulation input (SLOT 2) */
 signed int output[1];
 
 #if BUILD_Y8950
@@ -1877,6 +1877,8 @@ static void OPLSetUpdateHandler(FM_OPL *OPL,OPL_UPDATEHANDLER UpdateHandler,int 
 	OPL->UpdateParam = param;
 }
 
+#if BUILD_Y8950
+
 static int OPLWrite(FM_OPL *OPL,int a,int v)
 {
 	if( !(a&1) )
@@ -1891,6 +1893,8 @@ static int OPLWrite(FM_OPL *OPL,int a,int v)
 	}
 	return OPL->status>>7;
 }
+
+#endif
 
 static unsigned char OPLRead(FM_OPL *OPL,int a)
 {
