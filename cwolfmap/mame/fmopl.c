@@ -83,7 +83,7 @@ Revision History:
 
 #define MAX_VOLUME 20
 
-static double MULTIPLY_VOLUME(const int v)
+double MULTIPLY_VOLUME(const int v)
 {
 	return ((double)v + 0.3) / (MAX_VOLUME + 0.3);
 }
@@ -610,17 +610,17 @@ static int num_lock = 0;
 
 
 static void *cur_chip = NULL;	/* current chip pointer */
-static OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
+OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
 
 static signed int phase_modulation;	/* phase modulation input (SLOT 2) */
-static signed int output[1];
+signed int output[1];
 
 #if BUILD_Y8950
 static INT32 output_deltat[4];		/* for Y8950 DELTA-T, chip is mono, that 4 here is just for safety */
 #endif
 
-static UINT32	LFO_AM;
-static INT32	LFO_PM;
+UINT32	LFO_AM;
+INT32	LFO_PM;
 
 #define INLINE inline
 
