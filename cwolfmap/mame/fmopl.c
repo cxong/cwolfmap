@@ -360,7 +360,7 @@ static const UINT32 ksl_tab[8*16]=
 /* sustain level table (3dB per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
 #define SC(db) (UINT32) ( db * (2.0/ENV_STEP) )
-static const UINT32 sl_tab[16]={
+const UINT32 sl_tab[16]={
  SC( 0),SC( 1),SC( 2),SC(3 ),SC(4 ),SC(5 ),SC(6 ),SC( 7),
  SC( 8),SC( 9),SC(10),SC(11),SC(12),SC(13),SC(14),SC(31)
 };
@@ -368,7 +368,7 @@ static const UINT32 sl_tab[16]={
 
 
 #define RATE_STEPS (8)
-static const unsigned char eg_inc[15*RATE_STEPS]={
+const unsigned char eg_inc[15*RATE_STEPS]={
 
 /*cycle:0 1  2 3  4 5  6 7*/
 
@@ -396,7 +396,7 @@ static const unsigned char eg_inc[15*RATE_STEPS]={
 #define O(a) (a*RATE_STEPS)
 
 /*note that there is no O(13) in this table - it's directly in the code */
-static const unsigned char eg_rate_select[16+64+16]={	/* Envelope Generator rates (16 + 64 rates + 16 RKS) */
+const unsigned char eg_rate_select[16+64+16]={	/* Envelope Generator rates (16 + 64 rates + 16 RKS) */
 /* 16 infinite time rates */
 O(14),O(14),O(14),O(14),O(14),O(14),O(14),O(14),
 O(14),O(14),O(14),O(14),O(14),O(14),O(14),O(14),
@@ -437,7 +437,7 @@ O(12),O(12),O(12),O(12),O(12),O(12),O(12),O(12),
 /*mask  4095, 2047, 1023, 511, 255, 127, 63, 31, 15, 7,  3,  1,  0,  0,  0,  0  */
 
 #define O(a) (a*1)
-static const unsigned char eg_rate_shift[16+64+16]={	/* Envelope Generator counter shifts (16 + 64 rates + 16 RKS) */
+const unsigned char eg_rate_shift[16+64+16]={	/* Envelope Generator counter shifts (16 + 64 rates + 16 RKS) */
 /* 16 infinite time rates */
 O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
 O(0),O(0),O(0),O(0),O(0),O(0),O(0),O(0),
@@ -476,7 +476,7 @@ O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),
 
 /* multiple table */
 #define ML(a) (UINT8) (a * 2)
-static const UINT8 mul_tab[16]= {
+const UINT8 mul_tab[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,10,12,12,15,15 */
   ML( 0.50),ML( 1.00),ML( 2.00),ML( 3.00),ML( 4.00),ML( 5.00),ML( 6.00),ML( 7.00),
   ML( 8.00),ML( 9.00),ML(10.00),ML(10.00),ML(12.00),ML(12.00),ML(15.00),ML(15.00)
@@ -489,13 +489,13 @@ static const UINT8 mul_tab[16]= {
 *	TL_RES_LEN - sinus resolution (X axis)
 */
 #define TL_TAB_LEN (12*2*TL_RES_LEN)
-static signed int tl_tab[TL_TAB_LEN];
+signed int tl_tab[TL_TAB_LEN];
 
 #define ENV_QUIET		(TL_TAB_LEN>>4)
 
 /* sin waveform table in 'decibel' scale */
 /* four waveforms on OPL2 type chips */
-static unsigned int sin_tab[SIN_LEN * 4];
+unsigned int sin_tab[SIN_LEN * 4];
 
 
 /* LFO Amplitude Modulation table (verified on real YM3812)
@@ -513,7 +513,7 @@ static unsigned int sin_tab[SIN_LEN * 4];
 
 #define LFO_AM_TAB_ELEMENTS 210
 
-static const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
+const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
 0,0,0,0,0,0,0,
 1,1,1,1,
 2,2,2,2,
@@ -569,7 +569,7 @@ static const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
 };
 
 /* LFO Phase Modulation table (verified on real YM3812) */
-static const INT8 lfo_pm_table[8*8*2] = {
+const INT8 lfo_pm_table[8*8*2] = {
 
 /* FNUM2/FNUM = 00 0xxxxxxx (0x0000) */
 0, 0, 0, 0, 0, 0, 0, 0,	/*LFO PM depth = 0*/
