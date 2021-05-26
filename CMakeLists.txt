@@ -39,6 +39,9 @@ target_link_libraries(audio_extract cwolfmap)
 add_executable(music_extract music_extract.c)
 target_link_libraries(music_extract cwolfmap)
 
+add_executable(music_play music_play.c)
+target_link_libraries(music_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
+
 add_executable(vswap_sound_extract vswap_sound_extract.c)
 target_link_libraries(vswap_sound_extract cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
 
