@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < map.audio.nMusic; i++)
 	{
-		char *data;
+		const char *data;
 		size_t len;
 		err = CWAudioGetMusic(&map.audio, i, &data, &len);
 		if (err != 0)
