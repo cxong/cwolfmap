@@ -53,6 +53,36 @@ static int ctoi(const int c)
 	return -1;
 }
 
+#pragma pack(push, 1)
+typedef struct
+{
+	uint8_t mChar, cChar, mScale, cScale, mAttack, cAttack, mSus, cSus, mWave,
+		cWave, nConn,
+
+		// These are only for Muse - these bytes are really unused
+		voice, mode;
+	uint8_t unused[3];
+} Instrument;
+
+typedef struct
+{
+	uint32_t length;
+	uint16_t priority;
+	Instrument inst;
+	byte block;
+	byte data[1];
+} AdLibSound;
+#pragma pack(pop)
+
+/*static void SDL_ALPlaySound(AdLibSound *sound)
+{
+	alLengthLeft = sound->length;
+	alBlock = ((sound->block & 7) << 2) | 0x20;
+
+	SDL_AlSetFXInst(&sound->inst);
+	alSound = (byte *)sound->data;
+}*/
+
 int main(int argc, char *argv[])
 {
 	CWolfMap map;
@@ -101,6 +131,10 @@ int main(int argc, char *argv[])
 		{
 			goto bail;
 		}
+		if (len == 88)
+		{
+			continue;
+		}
 		nSounds++;
 		sounds = realloc(sounds, nSounds * sizeof(Sound));
 		if (sounds == NULL)
@@ -109,6 +143,10 @@ int main(int argc, char *argv[])
 		}
 		Sound *sound = &sounds[nSounds - 1];
 		sprintf(sound->name, "MUS%05d", i);
+		const AdLibSound *als = (const AdLibSound *)data;
+		printf(
+			"Loaded adlib sound %d (%d len, %d data length)\n", i, als->length,
+			(int)len);
 		sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
 	}
 
@@ -137,6 +175,7 @@ bail:
 	{
 		Mix_FreeChunk(sounds[i].snd);
 	}
+	YM3812Shutdown();
 	Mix_CloseAudio();
 	free(sounds);
 	return err;
