@@ -88,22 +88,6 @@ double MULTIPLY_VOLUME(const int v)
 	return ((double)v + 0.3) / (MAX_VOLUME + 0.3);
 }
 
-#ifdef __BIG_ENDIAN__
-#define BigShort(x) (x)
-#define BigLong(x) (x)
-#define BigLongLong(x) (x)
-#define LittleShort SwapShort
-#define LittleLong SwapLong
-#define LittleLongLong SwapLongLong
-#else
-#define BigShort SwapShort
-#define BigLong SwapLong
-#define BigLongLong SwapLongLong
-#define LittleShort(x) (x)
-#define LittleLong(x) (x)
-#define LittleLongLong(x) (x)
-#endif
-
 #if _MSC_VER == 1200            // Visual C++ 6
 inline void logerror(...) {}
 #else
@@ -1964,25 +1948,13 @@ void YM3812UpdateOne(int which, INT16 *buffer, int length)
 		}
 
 		lt = output[0];
-
-//		lt >>= FINAL_SH;
 		lt<<=2;
 
 		/* limit check */
 		lt = limit( lt , MAXOUT, MINOUT );
 
 		/* store to sound buffer */
-/*		#if (OPL_SAMPLE_BITS == 16)
-            lt += 32768;
-        #else
-            lt += 128;
-        #endif*/
-
-//		buf[i] = lt;
-
-		buf[i*2] = buf[i*2+1] = (OPLSAMPLE)LittleShort(lt);
-		//buf[i*2] = static_cast<OPLSAMPLE> (lt*MULTIPLY_VOLUME(AdlibVolume));          // stereo version
-		//buf[i*2+1] = static_cast<OPLSAMPLE> (lt*MULTIPLY_VOLUME(AdlibVolume));
+		buf[i*2] = buf[i*2+1] = (OPLSAMPLE)lt;
 
 		advance(OPL);
 	}

@@ -27,6 +27,10 @@ int main(int argc, char *argv[])
 		{
 			goto bail;
 		}
+		if (len == 0)
+		{
+			continue;
+		}
 		char buf[256];
 		sprintf(buf, "%d.wlf", i);
 		FILE *f = fopen(buf, "wb");
