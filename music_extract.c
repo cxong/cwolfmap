@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	{
 		const char *data;
 		size_t len;
-		err = CWAudioGetMusic(&map.audio, i, &data, &len);
+		err = CWAudioGetMusicRaw(&map.audio, i, &data, &len);
 		if (err != 0)
 		{
 			goto bail;
