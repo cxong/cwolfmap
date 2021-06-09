@@ -223,7 +223,7 @@ int CWAudioGetMusic(
 	if (*sqHack == 0)
 	{
 		// LumpLength?
-		sqHackLen = rawLen;
+		sqHackLen = (int)rawLen;
 	}
 	else
 	{
@@ -255,7 +255,7 @@ int CWAudioGetMusic(
 	if (*sqHack == 0)
 	{
 		// LumpLength?
-		sqHackLen = rawLen;
+		sqHackLen = (int)rawLen;
 	}
 	else
 	{
