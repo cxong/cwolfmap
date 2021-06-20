@@ -1,6 +1,6 @@
 # cwolfmap
 
-[![Build Status](https://travis-ci.org/cxong/cwolfmap.svg?branch=master)](https://travis-ci.org/cxong/cwolfmap)
+[![Build Status](https://github.com/cxong/cwolfmap/workflows/Build/badge.svg)](https://github.com/cxong/cwolfmap/actions)
 
 Wolf 3D map reader in C
 
