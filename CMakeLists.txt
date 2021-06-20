@@ -33,8 +33,8 @@ add_subdirectory(cwolfmap)
 add_executable(cwolfmap_test cwolfmap_test.c rlutil.h)
 target_link_libraries(cwolfmap_test cwolfmap)
 
-add_executable(audio_extract audio_extract.c)
-target_link_libraries(audio_extract cwolfmap)
+add_executable(audio_play audio_play.c rlutil.h)
+target_link_libraries(audio_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
 
 add_executable(music_extract music_extract.c)
 target_link_libraries(music_extract cwolfmap)

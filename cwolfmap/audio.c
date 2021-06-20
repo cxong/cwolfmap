@@ -3,14 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "audiowl6.h"
+#include "audio_sod.h"
+#include "audio_wl1.h"
+#include "audio_wl6.h"
 #include "mame/fmopl.h"
 
 #define PATH_MAX 4096
 static int volume = 20;
-const int oplChip = 0;
+static const int oplChip = 0;
 #define OPL_CHANNELS 9
 #define MUSIC_RATE 700
+#define SOUND_RATE 140 // Also affects PC Speaker sounds
+#define SOUND_TICKS (MUSIC_RATE / SOUND_RATE)
 #define SAMPLES_PER_MUSIC_TICK (MUSIC_SAMPLE_RATE / MUSIC_RATE)
 
 #pragma pack(push, 1)
@@ -23,6 +27,15 @@ typedef struct
 		voice, mode;
 	uint8_t unused[3];
 } AlInstrument;
+
+typedef struct
+{
+	uint32_t length;
+	uint16_t priority;
+	AlInstrument inst;
+	uint8_t block;
+	uint8_t data[1];
+} AdLibSound;
 #pragma pack(pop)
 
 static const AlInstrument ChannelRelease = {
@@ -49,7 +62,7 @@ static const AlInstrument ChannelRelease = {
 static void AlSetChanInst(const AlInstrument *inst, unsigned int chan)
 {
 	static const uint8_t chanOps[OPL_CHANNELS] = {0,   1,	 2,	   8,	9,
-											   0xA, 0x10, 0x11, 0x12};
+												  0xA, 0x10, 0x11, 0x12};
 	uint8_t c, m;
 
 	m = chanOps[chan]; // modulator cell for channel
@@ -118,7 +131,7 @@ void CWAudioHeadFree(CWAudioHead *head)
 	free(head->offsets);
 }
 
-int CWAudioLoadAudioT(CWAudio *audio, const char *path)
+int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 {
 	int err = 0;
 	FILE *f = fopen(path, "rb");
@@ -136,8 +149,18 @@ int CWAudioLoadAudioT(CWAudio *audio, const char *path)
 		fprintf(stderr, "Failed to read audio data");
 		goto bail;
 	}
-	audio->nSound = LASTSOUND;
-	audio->nMusic = LASTMUSIC;
+	switch (type)
+	{
+	case CWMAPTYPE_WL1:
+		CWAudioWL1LoadAudioT(audio);
+		break;
+	case CWMAPTYPE_WL6:
+		CWAudioWL6LoadAudioT(audio);
+		break;
+	case CWMAPTYPE_SOD:
+		CWAudioSODLoadAudioT(audio);
+		break;
+	}
 
 bail:
 	if (f)
@@ -154,12 +177,12 @@ void CWAudioFree(CWAudio *audio)
 	free(audio->data);
 }
 
-int CWAudioGetAdlibSound(
+int CWAudioGetAdlibSoundRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-	const int off = audio->head.offsets[i + STARTADLIBSOUNDS];
-	*len = audio->head.offsets[i + STARTADLIBSOUNDS + 1] - off;
+	const int off = audio->head.offsets[i + audio->startAdlibSounds];
+	*len = audio->head.offsets[i + audio->startAdlibSounds + 1] - off;
 	if (*len == 0)
 	{
 		fprintf(stderr, "No audio len for track %d\n", i);
@@ -172,12 +195,66 @@ bail:
 	return err;
 }
 
+int CWAudioGetAdlibSound(
+	const CWAudio *audio, const int idx, char **data, size_t *len)
+{
+	*data = NULL;
+	*len = 0;
+	const char *rawData;
+	size_t rawLen;
+	int err = CWAudioGetAdlibSoundRaw(audio, idx, &rawData, &rawLen);
+	if (err != 0)
+	{
+		goto bail;
+	}
+
+	const AdLibSound *sound = (const AdLibSound *)rawData;
+	const uint8_t alBlock = ((sound->block & 7) << 2) | 0x20;
+	AlSetChanInst(&sound->inst, 0);
+
+	const uint8_t *alSound = sound->data;
+	*len = sound->length * SAMPLES_PER_MUSIC_TICK * SOUND_TICKS *
+		   MUSIC_AUDIO_CHANNELS * 2;
+	*data = malloc(*len);
+	int16_t *stream16 = (int16_t *)*data;
+	for (int alLengthLeft = (int)sound->length; alLengthLeft > 0;
+		 alLengthLeft--)
+	{
+		// THIS is the way the original Wolfenstein 3-D code handled it!
+		if (*alSound)
+		{
+			alOut(alFreqL, *alSound);
+			alOut(alFreqH, alBlock);
+		}
+		else
+			alOut(alFreqH, 0);
+		alSound++;
+
+		for (int i = 0; i < SOUND_TICKS; i++)
+		{
+			YM3812UpdateOne(oplChip, stream16, SAMPLES_PER_MUSIC_TICK);
+			stream16 += SAMPLES_PER_MUSIC_TICK * MUSIC_AUDIO_CHANNELS;
+		}
+	}
+	alOut(alFreqH, 0);
+
+	return err;
+
+bail:
+	if (err != 0)
+	{
+		free(*data);
+		*data = NULL;
+	}
+	return err;
+}
+
 int CWAudioGetMusicRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-	const int off = audio->head.offsets[i + STARTMUSIC];
-	*len = audio->head.offsets[i + STARTMUSIC + 1] - off;
+	const int off = audio->head.offsets[i + audio->startMusic];
+	*len = audio->head.offsets[i + audio->startMusic + 1] - off;
 	if (*len == 0)
 	{
 		fprintf(stderr, "No music len for track %d\n", i);
@@ -277,10 +354,9 @@ int CWAudioGetMusic(
 			sqHackLen -= 4;
 		} while (sqHackLen > 0);
 
-		const int numreadysamples = SAMPLES_PER_MUSIC_TICK;
-		YM3812UpdateOne(oplChip, stream16, numreadysamples);
+		YM3812UpdateOne(oplChip, stream16, SAMPLES_PER_MUSIC_TICK);
 
-		stream16 += numreadysamples * MUSIC_AUDIO_CHANNELS;
+		stream16 += SAMPLES_PER_MUSIC_TICK * MUSIC_AUDIO_CHANNELS;
 	}
 
 	return err;
@@ -292,4 +368,30 @@ bail:
 		*data = NULL;
 	}
 	return err;
+}
+
+int CWAudioGetLevelMusic(const CWMapType type, const int level)
+{
+	switch (type)
+	{
+	case CWMAPTYPE_WL1:
+	case CWMAPTYPE_WL6:
+		return CWAudioWL6GetLevelMusic(level);
+	case CWMAPTYPE_SOD:
+		return CWAudioSODGetLevelMusic(level);
+	}
+	return -1;
+}
+
+int CWAudioGetSong(const CWMapType type, const CWSongType song)
+{
+	switch (type)
+	{
+	case CWMAPTYPE_WL1:
+	case CWMAPTYPE_WL6:
+		return CWAudioWL6GetSong(song);
+	case CWMAPTYPE_SOD:
+		return CWAudioSODGetSong(song);
+	}
+	return -1;
 }
