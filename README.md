@@ -9,7 +9,8 @@ This project implements a C library that reads Wolf 3D maps (GameMaps format): h
 ## Features
 
 - Read map data, levels, planes
-- Extract adlib music (WLF/IMF files)
-- Extract digital sound (RAW/WAV)
+- Extract and play adlib music (WLF/IMF files)
+- Play adlib sound effects
+- Extract and play digital sound (RAW/WAV)
 
 ![screenshot](https://github.com/cxong/cwolfmap/blob/master/screenshot.png)
