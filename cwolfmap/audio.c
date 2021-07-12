@@ -217,7 +217,7 @@ int CWAudioGetAdlibSound(
 		   MUSIC_AUDIO_CHANNELS * 2;
 	*data = malloc(*len);
 	int16_t *stream16 = (int16_t *)*data;
-	for (int alLengthLeft = (int)sound->length; alLengthLeft > 0;
+	for (uint32_t alLengthLeft = sound->length; alLengthLeft > 0;
 		 alLengthLeft--)
 	{
 		// THIS is the way the original Wolfenstein 3-D code handled it!
