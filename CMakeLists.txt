@@ -22,6 +22,7 @@ else()
 	endif()
 	add_definitions(-Winline -Werror)
 endif()
+set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 find_package(SDL2 REQUIRED)
