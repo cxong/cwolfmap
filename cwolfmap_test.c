@@ -293,6 +293,11 @@ static void PrintCh(
 			setColor(LIGHTMAGENTA);
 			c = '#';
 			break;
+		case CWWALL_WHITE_PANEL:
+			setBackgroundColor(WHITE);
+			setColor(RED);
+			c = '=';
+			break;
 		case CWWALL_BROWN_CONCRETE:
 			setBackgroundColor(BROWN);
 			setColor(GREY);
@@ -341,6 +346,10 @@ static void PrintCh(
 		c = '|';
 		break;
 	case CWTILE_AREA:
+		break;
+	case CWTILE_SECRET_EXIT:
+		setColor(LIGHTCYAN);
+		c = '#';
 		break;
 	default:
 		c = '?';
@@ -686,66 +695,82 @@ static void PrintCh(
 		c = 'v';
 		break;
 	case CWENT_GUARD_E:
+	case CWENT_GUARD_MOVING_E:
 		setColor(RED);
 		c = '>';
 		break;
 	case CWENT_GUARD_N:
+	case CWENT_GUARD_MOVING_N:
 		setColor(RED);
 		c = '^';
 		break;
 	case CWENT_GUARD_W:
+	case CWENT_GUARD_MOVING_W:
 		setColor(RED);
 		c = '<';
 		break;
 	case CWENT_GUARD_S:
+	case CWENT_GUARD_MOVING_S:
 		setColor(RED);
 		c = 'v';
 		break;
 	case CWENT_SS_E:
+	case CWENT_SS_MOVING_E:
 		setColor(BLUE);
 		c = '>';
 		break;
 	case CWENT_SS_N:
+	case CWENT_SS_MOVING_N:
 		setColor(BLUE);
 		c = '^';
 		break;
 	case CWENT_SS_W:
+	case CWENT_SS_MOVING_W:
 		setColor(BLUE);
 		c = '<';
 		break;
 	case CWENT_SS_S:
+	case CWENT_SS_MOVING_S:
 		setColor(BLUE);
 		c = 'v';
 		break;
 	case CWENT_MUTANT_E:
+	case CWENT_MUTANT_MOVING_E:
 		setColor(GREEN);
 		c = '>';
 		break;
 	case CWENT_MUTANT_N:
+	case CWENT_MUTANT_MOVING_N:
 		setColor(GREEN);
 		c = '^';
 		break;
 	case CWENT_MUTANT_W:
+	case CWENT_MUTANT_MOVING_W:
 		setColor(GREEN);
 		c = '<';
 		break;
 	case CWENT_MUTANT_S:
+	case CWENT_MUTANT_MOVING_S:
 		setColor(GREEN);
 		c = 'v';
 		break;
 	case CWENT_OFFICER_E:
+	case CWENT_OFFICER_MOVING_E:
 		setColor(GREY);
 		c = '>';
 		break;
 	case CWENT_OFFICER_N:
+	case CWENT_OFFICER_MOVING_N:
 		setColor(GREY);
 		c = '^';
 		break;
 	case CWENT_OFFICER_W:
+	case CWENT_OFFICER_MOVING_W:
 		setColor(GREY);
 		c = '<';
 		break;
 	case CWENT_OFFICER_S:
+	case CWENT_OFFICER_MOVING_S:
 		setColor(GREY);
 		c = 'v';
 		break;
@@ -828,6 +853,7 @@ static void PrintCh(
 
 int main(int argc, char *argv[])
 {
+	CWAudioInit();
 	CWolfMap map;
 	int err = 0;
 	if (argc == 2)
@@ -868,5 +894,6 @@ int main(int argc, char *argv[])
 
 bail:
 	CWFree(&map);
+	CWAudioTerminate();
 	return err;
 }
