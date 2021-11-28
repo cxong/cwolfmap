@@ -104,11 +104,11 @@ int main(int argc, char *argv[])
 	int err = 0;
 	if (argc == 2)
 	{
-		err = CWLoad(&map, argv[1]);
+		err = CWLoad(&map, argv[1], 0);
 	}
 	else
 	{
-		err = CWLoad(&map, "WOLF3D");
+		err = CWLoad(&map, "WOLF3D", 0);
 	}
 	if (err != 0)
 	{
