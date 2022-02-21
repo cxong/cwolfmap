@@ -336,7 +336,7 @@ uint16_t CWLevelGetCh(
 	const CWLevel *level, const int planeIndex, const int x, const int y)
 {
 	const CWPlane *plane = &level->planes[planeIndex];
-	return plane->plane[y * level->header.height + x];
+	return plane->plane[y * level->header.width + x];
 }
 
 static const CWTile tileMap[] = {
