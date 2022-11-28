@@ -3,6 +3,7 @@
 
 int main(int argc, char *argv[])
 {
+	CWAudioInit();
 	CWolfMap map;
 	int err = 0;
 	if (argc == 2)
@@ -52,5 +53,6 @@ int main(int argc, char *argv[])
 
 bail:
 	CWFree(&map);
+	CWAudioTerminate();
 	return err;
 }

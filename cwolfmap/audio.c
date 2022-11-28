@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "audio_bs6.h"
 #include "audio_sod.h"
 #include "audio_wl1.h"
 #include "audio_wl6.h"
@@ -175,6 +176,9 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 		break;
 	case CWMAPTYPE_SOD:
 		CWAudioSODLoadAudioT(audio);
+		break;
+	case CWMAPTYPE_BS6:
+		CWAudioBS6LoadAudioT(audio);
 		break;
 	default:
 		fprintf(stderr, "Unknown map type\n");
