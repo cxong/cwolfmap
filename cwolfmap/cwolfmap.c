@@ -19,6 +19,7 @@
 #include "audiowl6.h"
 #include "expand.h"
 
+// TODO: use map header magic value
 #define MAGIC 0xABCD
 
 #define PATH_MAX 4096
@@ -120,7 +121,7 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 
 	if (map->type == CWMAPTYPE_BS6)
 	{
-		//_TRY_LOAD("MAPTEMP", LoadMapData, map, pathBuf);
+		_TRY_LOAD("MAPTEMP", LoadMapData, map, pathBuf);
 	}
 	else
 	{
@@ -168,7 +169,9 @@ bail:
 
 static void LevelsFree(CWolfMap *map);
 
-static int LoadLevel(CWLevel *level, const unsigned char *data, const int off);
+static int LoadLevel(
+	const CWolfMap *map, CWLevel *level, const unsigned char *data,
+	const int off);
 static int LoadMapData(CWolfMap *map, const char *path)
 {
 	int err = 0;
@@ -201,7 +204,7 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	CWLevel *lPtr = map->levels;
 	for (const int32_t *ptr = &map->mapHead.ptr[0]; *ptr > 0; ptr++, lPtr++)
 	{
-		err = LoadLevel(lPtr, buf, *ptr);
+		err = LoadLevel(map, lPtr, buf, *ptr);
 		if (err != 0)
 		{
 			goto bail;
@@ -221,9 +224,12 @@ bail:
 	return err;
 }
 static int LoadPlane(
-	CWPlane *plane, const unsigned char *data, const uint32_t off,
-	unsigned char *buf, const int bufSize);
-static int LoadLevel(CWLevel *level, const unsigned char *data, const int off)
+	const CWolfMap *map, CWPlane *plane, const unsigned char *data,
+	const uint32_t off, unsigned char *buf, const int bufSize);
+// https://moddingwiki.shikadi.net/wiki/GameMaps_Format#Level_headers
+static int LoadLevel(
+	const CWolfMap *map, CWLevel *level, const unsigned char *data,
+	const int off)
 {
 	int err = 0;
 	unsigned char *buf = NULL;
@@ -234,8 +240,14 @@ static int LoadLevel(CWLevel *level, const unsigned char *data, const int off)
 	buf = malloc(bufSize);
 	for (int i = 0; i < NUM_PLANES; i++)
 	{
+		const int32_t plen = *(&level->header.lenPlane0 + i);
+		if (plen <= 0)
+		{
+			memset(&level->planes[i], 0, sizeof level->planes[i]);
+			continue;
+		}
 		const uint32_t poff = *(&level->header.offPlane0 + i);
-		err = LoadPlane(&level->planes[i], data, poff, buf, bufSize);
+		err = LoadPlane(map, &level->planes[i], data, poff, buf, bufSize);
 		if (err != 0)
 		{
 			goto bail;
@@ -265,8 +277,8 @@ bail:
 	return err;
 }
 static int LoadPlane(
-	CWPlane *plane, const unsigned char *data, const uint32_t off,
-	unsigned char *buf, const int bufSize)
+	const CWolfMap *map, CWPlane *plane, const unsigned char *data,
+	const uint32_t off, unsigned char *buf, const int bufSize)
 {
 	int err = 0;
 
@@ -278,7 +290,8 @@ static int LoadPlane(
 	ExpandCarmack(data + off, buf);
 	plane->len = bufSize;
 	plane->plane = malloc(bufSize);
-	ExpandRLEW(buf, (unsigned char *)plane->plane, MAGIC);
+	const bool hasFinalLength = map->type != CWMAPTYPE_BS6;
+	ExpandRLEW(buf, (unsigned char *)plane->plane, MAGIC, hasFinalLength);
 
 bail:
 	return err;
