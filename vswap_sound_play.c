@@ -54,6 +54,7 @@ static int ctoi(const int c)
 
 int main(int argc, char *argv[])
 {
+	CWAudioInit();
 	CWolfMap map;
 	Sound *sounds = NULL;
 	int nSounds = 0;
@@ -131,6 +132,7 @@ int main(int argc, char *argv[])
 
 bail:
 	CWFree(&map);
+	CWAudioTerminate();
 	for (int i = 0; i < nSounds; i++)
 	{
 		Mix_FreeChunk(sounds[i].snd);

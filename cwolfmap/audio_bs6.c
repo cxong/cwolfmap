@@ -5,7 +5,7 @@
 
 #include "audio_sod.h"
 
-#include "audiobs6.H"
+#include "audiobs6.h"
 
 void CWAudioBS6LoadAudioT(CWAudio *audio)
 {

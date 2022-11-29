@@ -75,6 +75,13 @@ CWMapType CWGetType(
 			return CWMAPTYPE_SOD;
 		}
 	}
+	sprintf(pathBuf, "%s/MAPHEAD.BS6", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		if (ext && ext1)
+			*ext = *ext1 = "BS6";
+		return CWMAPTYPE_BS6;
+	}
 	return CWMAPTYPE_UNKNOWN;
 }
 
@@ -111,7 +118,14 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 	}
 	_TRY_LOAD("MAPHEAD", LoadMapHead, map, pathBuf);
 
-	_TRY_LOAD("GAMEMAPS", LoadMapData, map, pathBuf);
+	if (map->type == CWMAPTYPE_BS6)
+	{
+		//_TRY_LOAD("MAPTEMP", LoadMapData, map, pathBuf);
+	}
+	else
+	{
+		_TRY_LOAD("GAMEMAPS", LoadMapData, map, pathBuf);
+	}
 
 	_TRY_LOAD("AUDIOHED", CWAudioLoadHead, &map->audio.head, pathBuf);
 
