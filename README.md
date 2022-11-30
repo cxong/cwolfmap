@@ -13,4 +13,11 @@ This project implements a C library that reads Wolf 3D maps (GameMaps format): h
 - Play adlib sound effects
 - Extract and play digital sound (RAW/WAV)
 
+### Supported Games
+
+- Blake Stone: Aliens of Gold (registered)
+- Spear of Destiny
+- Spear of Destiny mission packs
+- Wolfenstein 3D (shareware, registered)
+
 ![screenshot](https://github.com/cxong/cwolfmap/blob/master/screenshot.png)
