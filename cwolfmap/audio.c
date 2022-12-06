@@ -177,6 +177,7 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 	case CWMAPTYPE_SOD:
 		CWAudioSODLoadAudioT(audio);
 		break;
+	case CWMAPTYPE_BS1:
 	case CWMAPTYPE_BS6:
 		CWAudioBS6LoadAudioT(audio);
 		break;

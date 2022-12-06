@@ -15,7 +15,7 @@ This project implements a C library that reads Wolf 3D maps (GameMaps format): h
 
 ### Supported Games
 
-- Blake Stone: Aliens of Gold (registered)
+- Blake Stone: Aliens of Gold (shareware, registered)
 - Spear of Destiny
 - Spear of Destiny mission packs
 - Wolfenstein 3D (shareware, registered)

@@ -83,6 +83,13 @@ CWMapType CWGetType(
 			*ext = *ext1 = "BS6";
 		return CWMAPTYPE_BS6;
 	}
+	sprintf(pathBuf, "%s/MAPHEAD.BS1", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		if (ext && ext1)
+			*ext = *ext1 = "BS1";
+		return CWMAPTYPE_BS1;
+	}
 	return CWMAPTYPE_UNKNOWN;
 }
 
@@ -119,7 +126,7 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 	}
 	_TRY_LOAD("MAPHEAD", LoadMapHead, map, pathBuf);
 
-	if (map->type == CWMAPTYPE_BS6)
+	if (map->type == CWMAPTYPE_BS1 || map->type == CWMAPTYPE_BS6)
 	{
 		_TRY_LOAD("MAPTEMP", LoadMapData, map, pathBuf);
 	}
@@ -290,7 +297,8 @@ static int LoadPlane(
 	ExpandCarmack(data + off, buf);
 	plane->len = bufSize;
 	plane->plane = malloc(bufSize);
-	const bool hasFinalLength = map->type != CWMAPTYPE_BS6;
+	const bool hasFinalLength =
+		map->type != CWMAPTYPE_BS6 && map->type != CWMAPTYPE_BS1;
 	ExpandRLEW(buf, (unsigned char *)plane->plane, MAGIC, hasFinalLength);
 
 bail:
