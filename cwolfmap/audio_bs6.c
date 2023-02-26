@@ -2,8 +2,7 @@
 // Copyright (c) 1992-2013 Apogee Entertainment, LLC
 // Copyright(c) 2013 - 2022 Boris I.Bendovsky(bibendovsky @hotmail.com) and
 // Contributors SPDX - License - Identifier : GPL - 2.0 - or -later
-
-#include "audio_sod.h"
+#include "audio_bs6.h"
 
 #include "audiobs6.h"
 

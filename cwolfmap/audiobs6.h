@@ -27,14 +27,12 @@ Free Software Foundation, Inc.,
 //
 // Base offsets
 //
-const int16_t STARTPCSOUNDS = 0;
-const int16_t STARTADLIBSOUNDS = 100;
-const int16_t STARTDIGISOUNDS = 200;
-const int16_t STARTMUSIC = 300;
+#define STARTPCSOUNDS 0
+#define STARTADLIBSOUNDS 100
+#define STARTDIGISOUNDS 200
+#define STARTMUSIC 300
 
 const int16_t NUMSOUNDS = 100;
-
-extern int16_t NUMSNDCHUNKS;
 
 //
 // Sound names & indexes
@@ -139,7 +137,7 @@ const int16_t GOTTOKENSND = 96;
 const int16_t SWITCHSND = 97;
 const int16_t STATS1SND = 98;
 const int16_t STATS2SND = 99;
-const int16_t LASTSOUND = 100;
+#define LASTSOUND 100
 
 //
 // Music names & indexes (AOG)

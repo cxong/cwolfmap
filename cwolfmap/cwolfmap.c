@@ -90,6 +90,13 @@ CWMapType CWGetType(
 			*ext = *ext1 = "BS1";
 		return CWMAPTYPE_BS1;
 	}
+	sprintf(pathBuf, "%s/maphead.n3d", path);
+	if (access(pathBuf, F_OK) != -1)
+	{
+		if (ext && ext1)
+			*ext = *ext1 = "n3d";
+		return CWMAPTYPE_N3D;
+	}
 	return CWMAPTYPE_UNKNOWN;
 }
 
