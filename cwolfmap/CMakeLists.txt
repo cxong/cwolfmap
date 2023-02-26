@@ -5,3 +5,5 @@ add_library(cwolfmap STATIC ${CW_SOURCES} ${CWHEADERS})
 if(NOT WIN32)
 	target_link_libraries(cwolfmap m)
 endif()
+
+add_subdirectory(wad)

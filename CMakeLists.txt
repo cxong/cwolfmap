@@ -48,3 +48,6 @@ target_link_libraries(vswap_sound_extract cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_
 
 add_executable(vswap_sound_play vswap_sound_play.c rlutil.h)
 target_link_libraries(vswap_sound_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
+
+add_executable(wad_test wad_test.c)
+target_link_libraries(wad_test wad)
