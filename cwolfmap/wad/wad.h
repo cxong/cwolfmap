@@ -120,7 +120,7 @@ typedef struct {
  * @param filename the file name to open.
  * @return a newly-allocated wad_t (file implementation), or NULL on error.
  */
-wad_t* WAD_Open(char *filename);
+wad_t *WAD_Open(const char *filename);
 
 /**
  * Creates a new WAD file for random access.
@@ -183,7 +183,7 @@ int WAD_CommitEntries(wad_t *wad);
  * @param index the entry index to get.
  * @return a valid pointer, or NULL if no corresponding index.
  */
-wadentry_t* WAD_GetEntry(wad_t *wad, int index);
+wadentry_t* WAD_GetEntry(const wad_t *wad, int index);
 
 /**
  * Gets the first WAD entry by a particular name.

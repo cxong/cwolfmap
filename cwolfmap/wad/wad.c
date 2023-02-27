@@ -1032,10 +1032,10 @@ static wadfuncs_t* WAD_funcs(wadimpl_t impl)
 // ===========================================================================
 
 // ---------------------------------------------------------------
-// wad_t* WAD_Open(char *filename)
+// wad_t* WAD_Open(const char *filename)
 // See wad.h
 // ---------------------------------------------------------------
-wad_t* WAD_Open(char *filename)
+wad_t* WAD_Open(const char *filename)
 {
 	wad_t *out;
 	FILE *fp;
@@ -1280,10 +1280,10 @@ int WAD_CommitEntries(wad_t *wad)
 }
 
 // ---------------------------------------------------------------
-// wadentry_t* WAD_GetEntry(wad_t *wad, int index)
+// wadentry_t* WAD_GetEntry(const wad_t *wad, int index)
 // See wad.h
 // ---------------------------------------------------------------
-wadentry_t* WAD_GetEntry(wad_t *wad, int index)
+wadentry_t* WAD_GetEntry(const wad_t *wad, int index)
 {
 	// Reset error state.
 	waderrno = WADERROR_NO_ERROR;

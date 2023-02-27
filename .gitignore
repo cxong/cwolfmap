@@ -62,6 +62,8 @@ CMakeScripts/
 Debug/
 *.sln
 *.vcxproj*
+*.dir/
+x64/
 
 # VS Code
 .vscode/

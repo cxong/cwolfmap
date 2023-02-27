@@ -1,6 +1,7 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include "wad/wad.h"
 
 typedef enum
 {
@@ -27,4 +28,5 @@ typedef struct
 	int startAdlibSounds;
 	int startMusic;
 	char *data;
+	wad_t *wad;
 } CWAudio;

@@ -9,6 +9,20 @@ void CWAudioN3DLoadAudioT(CWAudio *audio)
 	audio->startAdlibSounds = STARTADLIBSOUNDS;
 	audio->startMusic = STARTMUSIC;
 }
+int CWAudioN3DLoadAudioWAD(CWAudio *audio, const char *path)
+{
+	int err = 0;
+	audio->wad = WAD_Open(path);
+	if (audio->wad == NULL)
+	{
+		err = -1;
+		fprintf(stderr, "Failed to read %s\n", path);
+		goto bail;
+	}
+
+bail:
+	return err;
+}
 static const int16_t songs[] = {
 	SONG1_MUS, ALLGOOD_MUS, SONG7_MUS,	  SONG3_MUS, SONG1_MUS,	 ALLGOOD_MUS,
 	SONG7_MUS, SONG4_MUS,	SONG3_MUS,	  SONG1_MUS, SONG7_MUS,	 SONG6_MUS,

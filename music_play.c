@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef struct
 {
 	char name[256];
 	Mix_Chunk *snd;
+	Mix_Music *mus;
 } Sound;
 
 static char itoc(int i)
@@ -72,7 +72,9 @@ int main(int argc, char *argv[])
 	}
 	printf("Loaded %d music tracks\n", map.audio.nMusic);
 
-	if (Mix_OpenAudio(MUSIC_SAMPLE_RATE, MUSIC_AUDIO_FMT, MUSIC_AUDIO_CHANNELS, 1024) != 0)
+	if (Mix_OpenAudio(
+			MUSIC_SAMPLE_RATE, MUSIC_AUDIO_FMT, MUSIC_AUDIO_CHANNELS, 1024) !=
+		0)
 	{
 		goto bail;
 	}
@@ -81,7 +83,7 @@ int main(int argc, char *argv[])
 	{
 		char *data;
 		size_t len;
-		err = CWAudioGetMusic(&map.audio, i, &data, &len);
+		err = CWAudioGetMusic(&map.audio, map.type, i, &data, &len);
 		if (err != 0)
 		{
 			goto bail;
@@ -96,11 +98,20 @@ int main(int argc, char *argv[])
 		{
 			goto bail;
 		}
-		printf("Loaded adlib music %d (%d len)\n", i, (int)len);
 
 		Sound *sound = &sounds[nSounds - 1];
 		sprintf(sound->name, "MUS%05d", i);
-		sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
+		if (map.type == CWMAPTYPE_N3D)
+		{
+			printf("Loaded music %d (%d len)\n", i, (int)len);
+			SDL_RWops *rwops = SDL_RWFromMem(data, len);
+			sound->mus = Mix_LoadMUS_RW(rwops, 1);
+		}
+		else
+		{
+			printf("Loaded adlib music %d (%d len)\n", i, (int)len);
+			sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
+		}
 	}
 
 	for (int i = 0; i < nSounds; i++)
@@ -119,7 +130,14 @@ int main(int argc, char *argv[])
 		{
 			continue;
 		}
-		Mix_PlayChannel(0, sounds[cmd].snd, 0);
+		if (map.type == CWMAPTYPE_N3D)
+		{
+			Mix_PlayMusic(sounds[cmd].mus, 0);
+		}
+		else
+		{
+			Mix_PlayChannel(0, sounds[cmd].snd, 0);
+		}
 	}
 
 bail:

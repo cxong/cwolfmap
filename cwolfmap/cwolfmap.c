@@ -16,6 +16,7 @@
 #include <unistd.h>
 #endif
 
+#include "audio_n3d.h"
 #include "audiowl6.h"
 #include "expand.h"
 
@@ -145,6 +146,17 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 	_TRY_LOAD("AUDIOHED", CWAudioLoadHead, &map->audio.head, pathBuf);
 
 	_TRY_LOAD("AUDIOT", CWAudioLoadAudioT, &map->audio, map->type, pathBuf);
+
+	if (map->type == CWMAPTYPE_N3D)
+	{
+		// N3D stores music as ogg files in wad
+		sprintf(pathBuf, "%s/noah3d.wad", path);
+		loadErr = CWAudioN3DLoadAudioWAD(&map->audio, pathBuf);
+		if (loadErr != 0)
+		{
+			err = loadErr;
+		}
+	}
 
 	_TRY_LOAD("VSWAP", CWVSwapLoad, &map->vswap, pathBuf);
 
@@ -341,6 +353,7 @@ void CWCopy(CWolfMap *dst, const CWolfMap *src)
 	const size_t vswapSoundsLen = dst->vswap.nSounds * sizeof(CWVSwapSound);
 	dst->vswap.sounds = malloc(vswapSoundsLen);
 	memcpy(dst->vswap.sounds, src->vswap.sounds, vswapSoundsLen);
+	// TODO: copy wad
 }
 
 void CWFree(CWolfMap *map)

@@ -26,7 +26,7 @@ set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_mixer CONFIG REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
 
 add_subdirectory(cwolfmap)
@@ -41,7 +41,7 @@ add_executable(music_extract music_extract.c)
 target_link_libraries(music_extract cwolfmap)
 
 add_executable(music_play music_play.c)
-target_link_libraries(music_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
+target_link_libraries(music_play cwolfmap ${SDL2_LIBRARY} SDL2_mixer::SDL2_mixer)
 
 add_executable(vswap_sound_extract vswap_sound_extract.c)
 target_link_libraries(vswap_sound_extract cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
@@ -50,4 +50,4 @@ add_executable(vswap_sound_play vswap_sound_play.c rlutil.h)
 target_link_libraries(vswap_sound_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARIES})
 
 add_executable(wad_test wad_test.c)
-target_link_libraries(wad_test wad)
+target_link_libraries(wad_test wad ${SDL2_LIBRARY} SDL2_mixer::SDL2_mixer)
