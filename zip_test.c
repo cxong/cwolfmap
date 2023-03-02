@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -25,11 +29,24 @@ int main(int argc, char *argv[])
 	printf("Loaded zip entry %s with size %d\n", argv[2], (int)bufsize);
 
 	// Read entry
-	char *line = strtok(buf, "\n");
-	while (line)
+	char *start = buf;
+	char linebuf[1024];
+	while (start)
 	{
-		printf("%s\n", line);
-		line = strtok(NULL, "\n");
+		long long len = MIN(1024, strlen(start));
+		char *nl = strchr(start, '\n');
+		if (nl != NULL)
+		{
+			len = MIN(len, nl - start);
+		}
+		strncpy(linebuf, start, len);
+		linebuf[len] = '\0';
+		printf("%s\n", linebuf);
+		if (nl == NULL)
+		{
+			break;
+		}
+		start = nl + 1;
 	}
 
 

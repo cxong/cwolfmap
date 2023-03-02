@@ -38,6 +38,7 @@ typedef struct
 	CWLevelHead header;
 	CWPlane planes[NUM_PLANES];
 	bool hasPlayerSpawn;
+	char *description;
 } CWLevel;
 
 typedef struct
@@ -56,6 +57,8 @@ CWMapType CWGetType(
 int CWLoad(CWolfMap *map, const char *path, const int spearMission);
 void CWCopy(CWolfMap *dst, const CWolfMap *src);
 void CWFree(CWolfMap *map);
+
+const char *CWGetDescription(CWolfMap *map, const int spearMission);
 
 typedef enum
 {
