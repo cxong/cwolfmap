@@ -463,6 +463,7 @@ const char *CWGetDescription(CWolfMap *map, const int spearMission)
 				   "forces of the occult, Hitler can see into the future and "
 				   "obtain the plans to future weapon systems!";
 		}
+		break;
 	case CWMAPTYPE_WL1:
 		return "Captured in your attempt to grab the secret plans, you "
 			   "were taken to the Nazi prison Castle Wolfenstein for "
@@ -496,6 +497,8 @@ const char *CWGetDescription(CWolfMap *map, const int spearMission)
 			   "the dead. It's so far removed from reality that it would "
 			   "seem silly if it wasn't so sick. But what if it were "
 			   "true?";
+	default:
+		break;
 	}
 	return NULL;
 }
