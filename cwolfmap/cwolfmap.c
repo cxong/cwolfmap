@@ -270,6 +270,7 @@ static int LoadLevel(
 {
 	int err = 0;
 	unsigned char *buf = NULL;
+	level->description = NULL;
 	memcpy(&level->header, data + off, sizeof(level->header));
 
 	const int bufSize =
@@ -397,8 +398,8 @@ static void LevelFree(CWLevel *level)
 	for (int i = 0; i < NUM_PLANES; i++)
 	{
 		free(level->planes[i].plane);
-		free(level->description);
 	}
+	free(level->description);
 }
 
 const char *CWGetDescription(CWolfMap *map, const int spearMission)
