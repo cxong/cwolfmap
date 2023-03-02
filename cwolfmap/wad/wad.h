@@ -151,7 +151,7 @@ wad_t* WAD_OpenBuffer(char *filename);
  * WARNING: Buffers must be saved to disk, or they are not persisted anywhere!
  * @return a newly-allocated wad_t (buffer implementation), or NULL on error.
  */
-wad_t* WAD_CreateBuffer();
+wad_t* WAD_CreateBuffer(void);
 
 /**
  * Creates a WAD buffer in memory with a specific initial content buffer size.

@@ -1217,7 +1217,7 @@ wad_t* WAD_OpenBuffer(char *filename)
 // wad_t* WAD_CreateBuffer()
 // See wad.h
 // ---------------------------------------------------------------
-wad_t* WAD_CreateBuffer()
+wad_t* WAD_CreateBuffer(void)
 {
 	return WAD_CreateBufferInit(WADBUFFER_INITSIZE);
 }
