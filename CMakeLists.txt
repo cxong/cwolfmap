@@ -51,3 +51,6 @@ target_link_libraries(vswap_sound_play cwolfmap ${SDL2_LIBRARY} ${SDL2_MIXER_LIB
 
 add_executable(wad_test wad_test.c)
 target_link_libraries(wad_test wad ${SDL2_LIBRARY} SDL2_mixer::SDL2_mixer)
+
+add_executable(zip_test zip_test.c)
+target_link_libraries(zip_test zip)
