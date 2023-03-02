@@ -878,8 +878,7 @@ int main(int argc, char *argv[])
 			level->header.width, level->header.height);
 		if (level->description)
 		{
-			printf(level->description);
-			printf("\n");
+			printf("%s\n", level->description);
 		}
 		for (int y = 0; y < level->header.height; y++)
 		{
