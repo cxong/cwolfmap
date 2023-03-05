@@ -1,6 +1,6 @@
 #include "cwolfmap/cwolfmap.h"
 #include <stdio.h>
-#include <SDL.h>
+#include <SDL_mixer.h>
 
 #define SAMPLE_RATE 44100
 #define AUDIO_FMT AUDIO_S16
