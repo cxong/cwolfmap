@@ -72,5 +72,8 @@ build/
 # Linux
 Makefile
 
+# macOS
+.DS_Store
+
 # Xcode
 *.xcodeproj/

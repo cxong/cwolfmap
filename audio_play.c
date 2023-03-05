@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
 		Sound *sound = &sounds[nSounds - 1];
 		sprintf(sound->name, "AUD%05d", i);
-		sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
+		sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, (Uint32)len);
 	}
 
 	for (int i = 0; i < nSounds; i++)
