@@ -26,6 +26,7 @@ set(CMAKE_OSX_ARCHITECTURES x86_64)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
+message("SDL2_mixer include dir: ${SDL2_MIXER_INCLUDE_DIRS}")
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
 
 add_subdirectory(cwolfmap)
