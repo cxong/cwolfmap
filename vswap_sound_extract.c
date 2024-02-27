@@ -1,6 +1,6 @@
 #include "cwolfmap/cwolfmap.h"
-#include <stdio.h>
 #include <SDL_mixer.h>
+#include <stdio.h>
 
 #define SAMPLE_RATE 44100
 #define AUDIO_FMT AUDIO_S16
@@ -32,7 +32,8 @@ static int extract_sound(const CWolfMap *map, const int i)
 	FILE *f = NULL;
 	SDL_AudioCVT cvt;
 	SDL_BuildAudioCVT(
-		&cvt, AUDIO_U8, 1, SND_RATE, AUDIO_FMT, AUDIO_CHANNELS, SAMPLE_RATE);
+		&cvt, AUDIO_U8, 1, CWGetAudioSampleRate(map), AUDIO_FMT,
+		AUDIO_CHANNELS, SAMPLE_RATE);
 
 	int err = CWVSwapGetSound(&map->vswap, i, &data, &len);
 	if (err != 0)
@@ -62,19 +63,20 @@ static int extract_sound(const CWolfMap *map, const int i)
 
 	const int subchunk1Size = 16;
 	const int32_t chunkSize = 4 + (8 + subchunk1Size) + (8 + cvt.len_cvt);
-	wavfile_header_t header = {{'R', 'I', 'F', 'F'},
-							   chunkSize,
-							   {'W', 'A', 'V', 'E'},
-							   {'f', 'm', 't', ' '},
-							   subchunk1Size,
-							   1,
-							   AUDIO_CHANNELS,
-							   SAMPLE_RATE,
-							   SAMPLE_RATE * AUDIO_CHANNELS * 2,
-							   AUDIO_CHANNELS * 2,
-							   16,
-							   {'d', 'a', 't', 'a'},
-							   cvt.len_cvt};
+	wavfile_header_t header = {
+		{'R', 'I', 'F', 'F'},
+		chunkSize,
+		{'W', 'A', 'V', 'E'},
+		{'f', 'm', 't', ' '},
+		subchunk1Size,
+		1,
+		AUDIO_CHANNELS,
+		SAMPLE_RATE,
+		SAMPLE_RATE * AUDIO_CHANNELS * 2,
+		AUDIO_CHANNELS * 2,
+		16,
+		{'d', 'a', 't', 'a'},
+		cvt.len_cvt};
 	if (fwrite(&header, sizeof header, 1, f) != 1)
 	{
 		printf("Failed to write sound header %s\n", buf);

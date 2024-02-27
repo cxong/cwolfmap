@@ -351,6 +351,9 @@ static void PrintCh(
 		setColor(LIGHTCYAN);
 		c = '#';
 		break;
+	case CWTILE_BACKGROUND:
+		c = ' ';
+		break;
 	default:
 		c = '?';
 		break;
@@ -666,6 +669,14 @@ static void PrintCh(
 		setColor(RED);
 		c = '$';
 		break;
+	case CWENT_NEXT_LEVEL:
+		setColor(YELLOW);
+		c = 'X';
+		break;
+	case CWENT_SECRET_LEVEL:
+		setColor(GREEN);
+		c = 'X';
+		break;
 	case CWENT_GHOST:
 		setColor(LIGHTCYAN);
 		c = '$';
@@ -842,6 +853,14 @@ static void PrintCh(
 	case CWENT_PACMAN_GHOST_BLUE:
 		setColor(LIGHTBLUE);
 		c = 'G';
+		break;
+	case CWENT_KERRY_KANGAROO:
+		setColor(CYAN);
+		c = 'K';
+		break;
+	case CWENT_ERNIE_ELEPHANT:
+		setColor(GREY);
+		c = 'E';
 		break;
 	default:
 		c = '?';

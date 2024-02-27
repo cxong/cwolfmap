@@ -18,6 +18,7 @@ This project implements a C library that reads Wolf 3D maps (GameMaps format): h
 - Blake Stone: Aliens of Gold (shareware, registered)
 - Spear of Destiny
 - Spear of Destiny mission packs
+- Super 3D Noah's Ark
 - Wolfenstein 3D (shareware, registered)
 
 ![screenshot](https://github.com/cxong/cwolfmap/blob/master/screenshot.png)

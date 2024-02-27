@@ -60,6 +60,8 @@ void CWFree(CWolfMap *map);
 
 const char *CWGetDescription(CWolfMap *map, const int spearMission);
 
+int CWGetAudioSampleRate(const CWolfMap *map);
+
 typedef enum
 {
 	CWTILE_WALL,
@@ -73,6 +75,7 @@ typedef enum
 	CWTILE_ELEVATOR_H,
 	CWTILE_SECRET_EXIT,
 	CWTILE_AREA,
+	CWTILE_BACKGROUND,
 	CWTILE_UNKNOWN,
 } CWTile;
 
@@ -137,6 +140,8 @@ typedef enum
 	CWENT_SPEAR,
 	CWENT_PUSHWALL,
 	CWENT_ENDGAME,
+	CWENT_NEXT_LEVEL,
+	CWENT_SECRET_LEVEL,
 	CWENT_GHOST,
 	CWENT_ANGEL,
 	CWENT_DEAD_GUARD,
@@ -205,6 +210,9 @@ typedef enum
 	CWENT_PACMAN_GHOST_YELLOW,
 	CWENT_PACMAN_GHOST_ROSE,
 	CWENT_PACMAN_GHOST_BLUE,
+
+	CWENT_KERRY_KANGAROO,
+	CWENT_ERNIE_ELEPHANT,
 
 	CWENT_UNKNOWN,
 } CWEntity;

@@ -503,6 +503,17 @@ const char *CWGetDescription(CWolfMap *map, const int spearMission)
 	return NULL;
 }
 
+int CWGetAudioSampleRate(const CWolfMap *map)
+{
+	switch (map->type)
+	{
+	case CWMAPTYPE_N3D:
+		return 11025;
+	default:
+		return 7042;
+	}
+}
+
 // http://gaarabis.free.fr/_sites/specs/wlspec_index.html
 
 uint16_t CWLevelGetCh(
@@ -605,7 +616,7 @@ static const CWTile tileMap[] = {
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
-	CWTILE_UNKNOWN,
+	CWTILE_BACKGROUND,
 	// 90
 	CWTILE_DOOR_V,
 	CWTILE_DOOR_H,
@@ -614,8 +625,8 @@ static const CWTile tileMap[] = {
 	CWTILE_DOOR_SILVER_V,
 	CWTILE_DOOR_SILVER_H,
 	// 96-99
-	CWTILE_UNKNOWN,
-	CWTILE_UNKNOWN,
+	CWTILE_DOOR_V, // Doors to stairs
+	CWTILE_DOOR_H,
 	CWTILE_UNKNOWN,
 	CWTILE_UNKNOWN,
 	// 100
@@ -874,8 +885,8 @@ static const CWEntity entityMap[] = {
 	CWENT_PUSHWALL,
 	CWENT_ENDGAME,
 	// 100
-	CWENT_UNKNOWN,
-	CWENT_UNKNOWN,
+	CWENT_NEXT_LEVEL,
+	CWENT_SECRET_LEVEL,
 	CWENT_UNKNOWN,
 	CWENT_UNKNOWN,
 	CWENT_UNKNOWN,
@@ -911,8 +922,8 @@ static const CWEntity entityMap[] = {
 	CWENT_SS_MOVING_N,
 	CWENT_SS_MOVING_W,
 	CWENT_SS_MOVING_S,
-	CWENT_UNKNOWN,
-	CWENT_UNKNOWN,
+	CWENT_KERRY_KANGAROO,
+	CWENT_ERNIE_ELEPHANT,
 	CWENT_UNKNOWN,
 	CWENT_UNKNOWN,
 	CWENT_DOG_E,
