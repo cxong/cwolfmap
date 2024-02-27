@@ -24,4 +24,9 @@ Use this library as a basis for your Wolf3D-engine games and mods that use origi
 - Super 3D Noah's Ark
 - Wolfenstein 3D (shareware, registered)
 
+### Not Supported
+
+- Graphics/tiles/sprites
+- Advanced tiles like patrol and AI behaviour
+
 ![screenshot](https://github.com/cxong/cwolfmap/blob/master/screenshot.png)
