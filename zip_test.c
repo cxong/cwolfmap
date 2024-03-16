@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		{
 			len = MIN(len, nl - start);
 		}
-		strncpy(linebuf, start, len);
+		strncpy(linebuf, start, 1024);
 		linebuf[len] = '\0';
 		printf("%s\n", linebuf);
 		if (nl == NULL)

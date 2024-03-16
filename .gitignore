@@ -35,6 +35,14 @@
 *.i*86
 *.x86_64
 *.hex
+audio_play
+cwolfmap_test
+music_extract
+music_play
+vswap_sound_extract
+vswap_sound_play
+wad_test
+zip_test
 
 # Debug files
 *.dSYM/
