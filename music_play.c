@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
 		if (map.type == CWMAPTYPE_N3D)
 		{
 			printf("Loaded music %d (%d len)\n", i, (int)len);
-			SDL_RWops *rwops = SDL_RWFromMem(data, len);
+			SDL_RWops *rwops = SDL_RWFromMem(data, (int)len);
 			sound->mus = Mix_LoadMUS_RW(rwops, 1);
 		}
 		else
 		{
 			printf("Loaded adlib music %d (%d len)\n", i, (int)len);
-			sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, len);
+			sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, (Uint32)len);
 		}
 	}
 

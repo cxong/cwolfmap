@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 		SDL_BuildAudioCVT(
 			&cvt, AUDIO_U8, 1, CWGetAudioSampleRate(&map), AUDIO_FMT,
 			AUDIO_CHANNELS, SAMPLE_RATE);
-		cvt.len = len;
+		cvt.len = (int)len;
 		cvt.buf = (Uint8 *)SDL_malloc(cvt.len * cvt.len_mult);
 		memcpy(cvt.buf, data, len);
 		SDL_ConvertAudio(&cvt);

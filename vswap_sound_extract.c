@@ -47,7 +47,7 @@ static int extract_sound(const CWolfMap *map, const int i)
 		goto bail;
 	}
 
-	cvt.len = len;
+	cvt.len = (int)len;
 	cvt.buf = (Uint8 *)SDL_malloc(cvt.len * cvt.len_mult);
 	memcpy(cvt.buf, data, len);
 	SDL_ConvertAudio(&cvt);
