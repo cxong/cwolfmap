@@ -1438,7 +1438,7 @@ int WAD_GetEntryCount(wad_t *wad, const char *name)
 		i++;
 	}
 
-	return i;
+	return out;
 }
 
 // ---------------------------------------------------------------
