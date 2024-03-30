@@ -100,8 +100,7 @@ bail:
 
 int main(int argc, char *argv[])
 {
-	(void)argc;
-	(void)argv;
+	CWAudioInit();
 	CWolfMap map;
 	int err = 0;
 	if (argc == 2)
