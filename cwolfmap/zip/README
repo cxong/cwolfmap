@@ -1,0 +1,14 @@
+A portable, simple zip library written in C
+
+Source: https://github.com/kuba--/zip
+
+Files: zip.h zip.c
+Copyright: 2015-2024 Kuba Podgorski <jakub.podgorski@autodesk.com>
+License: Unlicense
+
+Files: miniz.h
+Copyright: Rich Geldreich <richgel99@gmail.com>
+           2013-2014 RAD Game Tools and Valve Software
+           2010-2014 Rich Geldreich and Tenacious Software LLC
+           2016 Martin Raiber
+License: Unlicense and MIT
