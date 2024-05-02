@@ -52,6 +52,12 @@ add_subdirectory(cwolfmap)
 
 add_executable(cwolfmap_test cwolfmap_test.c rlutil.h)
 target_link_libraries(cwolfmap_test cwolfmap)
+if(APPLE)
+	set_target_properties(cwolfmap_test PROPERTIES
+		MACOSX_RPATH 1
+		BUILD_WITH_INSTALL_RPATH 1
+		INSTALL_RPATH "@loader_path/../Frameworks;/Library/Frameworks")
+endif()
 
 add_executable(audio_play audio_play.c rlutil.h)
 target_link_libraries(audio_play cwolfmap SDL2::SDL2 SDL2_mixer::SDL2_mixer)
