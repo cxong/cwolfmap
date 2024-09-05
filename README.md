@@ -15,6 +15,7 @@ Use this library as a basis for your Wolf3D-engine games and mods that use origi
 - Extract and play adlib music (WLF/IMF files)
 - Play adlib sound effects
 - Extract and play digital sound (RAW/WAV)
+- Extract and play OGG-in-WAD music (Super 3D Noah's Ark)
 
 ### Supported Games
 
