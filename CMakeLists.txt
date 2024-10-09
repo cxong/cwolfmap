@@ -68,6 +68,9 @@ target_link_libraries(music_extract cwolfmap)
 add_executable(music_play music_play.c)
 target_link_libraries(music_play cwolfmap SDL2::SDL2 SDL2_mixer::SDL2_mixer)
 
+add_executable(n3d_quiz_test n3d_quiz_test.c rlutil.h)
+target_link_libraries(n3d_quiz_test cwolfmap)
+
 add_executable(vswap_sound_extract vswap_sound_extract.c)
 target_link_libraries(vswap_sound_extract cwolfmap SDL2::SDL2 SDL2_mixer::SDL2_mixer)
 
