@@ -128,3 +128,9 @@ char *CWLevelN3DLoadQuizAnswer(
 	free(comment);
 	return result;
 }
+
+void CWN3DQuizFree(CWN3DQuiz *quiz)
+{
+	free(quiz->question);
+	free(quiz->answers);
+}

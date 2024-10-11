@@ -1,47 +1,39 @@
-#include "cwolfmap/n3d.h"
+#include "cwolfmap/cwolfmap.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
-	char *languageBuf = NULL;
+	CWAudioInit();
+	CWolfMap map;
 	int err = 0;
 	if (argc != 2)
 	{
-		printf("Usage: n3d_quiz_test <path to noah3d.pk3>\n");
+		printf("Usage: n3d_quiz_test <path to S3DNA folder>\n");
 		err = 1;
 		goto bail;
 	}
-	languageBuf = CWN3DLoadLanguageEnu(argv[1]);
-	if (languageBuf == NULL)
+	err = CWLoad(&map, argv[1], 0);
+	if (err != 0)
 	{
-		err = 1;
 		goto bail;
 	}
 
-	for (int quiz = 1;; quiz++)
+	for (int i = 0; i < map.nQuizzes; i++)
 	{
-		char *question = CWLevelN3DLoadQuizQuestion(languageBuf, quiz);
-		if (question == NULL)
+		const CWN3DQuiz *quiz = &map.quizzes[i];
+		printf("Q%d: %s\n", i + 1, quiz->question);
+		for (int j = 0; j < quiz->nAnswers; j++)
 		{
-			break;
+			const char *answer = quiz->answers[j];
+			printf(
+				"%c: %s (%s)\n", (char)j + 'A', answer,
+				j == quiz->correctIdx ? "correct" : "wrong");
 		}
-		printf("Q%d: %s\n", quiz, question);
-		for (char a = 'A';; a++)
-		{
-			bool correct = false;
-			char *answer =
-				CWLevelN3DLoadQuizAnswer(languageBuf, quiz, a, &correct);
-			if (answer == NULL)
-			{
-				break;
-			}
-			printf("%c: %s (%s)\n", a, answer, correct ? "correct" : "wrong");
-			free(answer);
-		}
-		free(question);
 	}
 
 bail:
+	CWFree(&map);
+	CWAudioTerminate();
 	return err;
 }
