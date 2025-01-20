@@ -219,8 +219,13 @@ int CWAudioGetAdlibSoundRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	const int off = SDL_Swap32(audio->head.offsets[i + audio->startAdlibSounds]);
+	*len = SDL_Swap32(audio->head.offsets[i + audio->startAdlibSounds + 1]) - off;
+#else
 	const int off = audio->head.offsets[i + audio->startAdlibSounds];
 	*len = audio->head.offsets[i + audio->startAdlibSounds + 1] - off;
+#endif
 	if (*len == 0)
 	{
 		fprintf(stderr, "No audio len for track %d\n", i);
@@ -246,7 +251,12 @@ int CWAudioGetAdlibSound(
 		goto bail;
 	}
 
-	const AdLibSound *sound = (const AdLibSound *)rawData;
+	AdLibSound *sound = (const AdLibSound *)rawData;
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	sound->length = SDL_Swap32(sound->length);
+	sound->priority = SDL_Swap16(sound->priority);
+#endif
+
 	const uint8_t alBlock = ((sound->block & 7) << 2) | 0x20;
 	AlSetChanInst(&sound->inst, 0);
 
@@ -291,8 +301,13 @@ int CWAudioGetMusicRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	const int off = SDL_Swap32(audio->head.offsets[i + audio->startMusic]);
+	*len = SDL_Swap32(audio->head.offsets[i + audio->startMusic + 1]) - off;
+#else
 	const int off = audio->head.offsets[i + audio->startMusic];
 	*len = audio->head.offsets[i + audio->startMusic + 1] - off;
+#endif
 	if (*len == 0)
 	{
 		fprintf(stderr, "No music len for track %d\n", i);
