@@ -154,7 +154,7 @@
  * called. */
 /* The current downside is the times written to your archives will be from 1979.
  */
-/*#define MINIZ_NO_TIME */
+#define MINIZ_NO_TIME 1
 
 /* Define MINIZ_NO_DEFLATE_APIS to disable all compression API's. */
 /*#define MINIZ_NO_DEFLATE_APIS */
@@ -5108,6 +5108,11 @@ static int mz_mkdir(const char *pDirname) {
 #ifndef MINIZ_NO_TIME
 #include <utime.h>
 #endif
+
+#ifdef __MORPHOS__
+#define __STRICT_ANSI__
+#endif
+
 #define MZ_FOPEN(f, m) fopen(f, m)
 #define MZ_FCLOSE fclose
 #define MZ_FREAD fread
