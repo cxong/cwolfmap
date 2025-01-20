@@ -191,12 +191,20 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 	// Read as many maps as we can; some versions of the game (SOD MP) truncate
 	// the headers
 	(void)!fread((void *)&map->mapHead, 1, size, f);
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	map->mapHead.magic = SDL_Swap16(map->mapHead.magic);
+#endif
 	if (map->mapHead.magic != MAGIC)
 	{
 		err = -1;
 		fprintf(stderr, "Unexpected magic value: %x\n", map->mapHead.magic);
 		goto bail;
 	}
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	for (int i = 0; i < CW_LEVELS; i++)
+		map->mapHead.ptr[i] = SDL_Swap32(map->mapHead.ptr[i]);
+#endif
+
 
 bail:
 	if (f)
@@ -274,6 +282,17 @@ static int LoadLevel(
 	unsigned char *buf = NULL;
 	level->description = NULL;
 	memcpy(&level->header, data + off, sizeof(level->header));
+
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	level->header.offPlane0 = SDL_Swap32(level->header.offPlane0);
+	level->header.offPlane1 = SDL_Swap32(level->header.offPlane1);
+	level->header.offPlane2 = SDL_Swap32(level->header.offPlane2);
+	level->header.lenPlane0 = SDL_Swap16(level->header.lenPlane0);
+	level->header.lenPlane1 = SDL_Swap16(level->header.lenPlane1);
+	level->header.lenPlane2 = SDL_Swap16(level->header.lenPlane2);
+	level->header.width = SDL_Swap16(level->header.width);
+	level->header.height = SDL_Swap16(level->header.height);
+#endif
 
 	const int bufSize =
 		level->header.width * level->header.height * sizeof(uint16_t);

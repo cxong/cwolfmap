@@ -164,7 +164,11 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 
 	free(audio->data);
 
-	const uint32_t len = audio->head.offsets[audio->head.nOffsets - 1];
+	uint32_t len = audio->head.offsets[audio->head.nOffsets - 1];
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	len = SDL_Swap32(len);
+#endif
+
 	audio->data = malloc(len);
 	if (fread(audio->data, 1, len, f) != len)
 	{
