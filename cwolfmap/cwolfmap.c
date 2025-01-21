@@ -591,7 +591,12 @@ uint16_t CWLevelGetCh(
 	const CWLevel *level, const int planeIndex, const int x, const int y)
 {
 	const CWPlane *plane = &level->planes[planeIndex];
+	#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+	uint16_t getch = SDL_Swap16(plane->plane[y * level->header.width + x]);
+	return getch;
+	#else
 	return plane->plane[y * level->header.width + x];
+	#endif
 }
 
 static const CWTile tileMap[] = {
