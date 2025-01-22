@@ -6,7 +6,7 @@
 #include <string.h>
 
 // https://web.archive.org/web/20201206195550/http://gaarabis.free.fr/_sites/specs/wlspec_index.html
-
+#include <SDL_endian.h>
 #define PATH_MAX 4096
 
 int CWVSwapLoad(CWVSwap *vswap, const char *path)
@@ -33,6 +33,11 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 		goto bail;
 	}
 	memcpy(&vswap->head, vswap->data, sizeof vswap->head);
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)	
+	vswap->head.chunkCount = SDL_Swap16(vswap->head.chunkCount);
+	vswap->head.firstSprite = SDL_Swap16(vswap->head.firstSprite);
+	vswap->head.firstSound = SDL_Swap16(vswap->head.firstSound);
+#endif	
 	vswap->chunkOffset = (uint32_t *)(vswap->data + sizeof vswap->head);
 	vswap->chunkLength = (uint16_t *)(vswap->chunkOffset + vswap->head.chunkCount);
 
