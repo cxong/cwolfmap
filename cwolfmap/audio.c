@@ -8,14 +8,9 @@
 #include "audio_sod.h"
 #include "audio_wl1.h"
 #include "audio_wl6.h"
-#ifdef __MORPHOS__
-#define BOOL BOOLMOS
-#endif
 #include "mame/fmopl.h"
 
-#ifndef PATH_MAX
 #define PATH_MAX 4096
-#endif
 static int volume = 20;
 static const int oplChip = 0;
 #define OPL_CHANNELS 9

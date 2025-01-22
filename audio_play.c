@@ -1,7 +1,4 @@
 #include "cwolfmap/cwolfmap.h"
-#ifdef __MORPHOS__
-#define BOOL BOOLMOS
-#endif
 #include "cwolfmap/mame/fmopl.h"
 #include "rlutil.h"
 #include <SDL_mixer.h>

@@ -59,18 +59,6 @@
 	#include <conio.h>    // for getch() and kbhit()
 	#define getch _getch
 	#define kbhit _kbhit
-#elif __MORPHOS__
-
-	#include <sys/ioctl.h> // for getkey()
-	#include <sys/types.h> // for kbhit()
-	#include <sys/time.h> // for kbhit()
-RLUTIL_INLINE int getch(void) {
-	return 0;
-}
-RLUTIL_INLINE int kbhit(void) {
-		return 0;
-}
-
 #else
 	#include <termios.h> // for getch() and kbhit()
 	#include <unistd.h> // for getch(), kbhit() and (u)sleep()
@@ -665,8 +653,6 @@ RLUTIL_INLINE int trows(void) {
 	else
 		return csbi.srWindow.Bottom - csbi.srWindow.Top + 1; // Window height
 		// return csbi.dwSize.Y; // Buffer height
-#elif __MORPHOS__
-	return -1;
 #else
 #ifdef TIOCGSIZE
 	struct ttysize ts;
@@ -692,8 +678,6 @@ RLUTIL_INLINE int tcols(void) {
 	else
 		return csbi.srWindow.Right - csbi.srWindow.Left + 1; // Window width
 		// return csbi.dwSize.X; // Buffer width
-#elif __MORPHOS__
-	return -1;
 #else
 #ifdef TIOCGSIZE
 	struct ttysize ts;
