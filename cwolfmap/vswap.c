@@ -46,7 +46,11 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	// Last chunk is not a sound
 	for (int i = vswap->head.firstSound; i < vswap->head.chunkCount - 1; i++)
 	{
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		const int size = SDL_Swap16(vswap->chunkLength[i]);
+#else
 		const int size = vswap->chunkLength[i];
+#endif
 		if (size != 4096)
 		{
 			vswap->nSounds++;
@@ -55,14 +59,22 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	vswap->sounds = calloc(vswap->nSounds, sizeof(CWVSwapSound));
 	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount - 1; i++, sound++)
 	{
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+		const uint32_t off = SDL_Swap32(vswap->chunkOffset[i]);
+		uint16_t size = SDL_Swap16(vswap->chunkLength[i]);
+#else
 		const uint32_t off = vswap->chunkOffset[i];
 		uint16_t size = vswap->chunkLength[i];
+#endif
 		vswap->sounds[sound].off = off;
 		vswap->sounds[sound].len = size;
 		while (size == 4096)
 		{
 			i++;
 			size = vswap->chunkLength[i];
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			size = SDL_Swap16(size);
+#endif
 			vswap->sounds[sound].len += size;
 		}
 	}
