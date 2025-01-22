@@ -369,7 +369,11 @@ int CWAudioGetMusic(
 		}
 		else
 		{
+		#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			sqHackLen = SDL_Swap16(*sqHack++);
+		#else
 			sqHackLen = *sqHack++;
+		#endif
 		}
 		const uint16_t *sqHackPtr = sqHack;
 
@@ -381,7 +385,11 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+				sqHackTime = alTimeCount + SDL_Swap16(*(sqHackPtr + 1));
+#else
 				sqHackTime = alTimeCount + *(sqHackPtr + 1);
+#endif
 				sqHackPtr += 2;
 				sqHackLen -= 4;
 			} while (sqHackLen > 0);
@@ -401,7 +409,11 @@ int CWAudioGetMusic(
 		}
 		else
 		{
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+			sqHackLen = SDL_Swap16(*sqHack++);
+#else
 			sqHackLen = *sqHack++;
+#endif
 		}
 		sqHackPtr = sqHack;
 		sqHackTime = 0;
@@ -411,7 +423,11 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+				sqHackTime = alTimeCount + SDL_Swap16(*(sqHackPtr + 1));
+#else
 				sqHackTime = alTimeCount + *(sqHackPtr + 1);
+#endif
 				alOut(
 					*(const uint8_t *)sqHackPtr,
 					*(((const uint8_t *)sqHackPtr) + 1));
