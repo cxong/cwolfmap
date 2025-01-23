@@ -6,7 +6,6 @@
 #include <string.h>
 
 // https://web.archive.org/web/20201206195550/http://gaarabis.free.fr/_sites/specs/wlspec_index.html
-#include <SDL_endian.h>
 #define PATH_MAX 4096
 
 int CWVSwapLoad(CWVSwap *vswap, const char *path)
@@ -33,11 +32,9 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 		goto bail;
 	}
 	memcpy(&vswap->head, vswap->data, sizeof vswap->head);
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)	
-	vswap->head.chunkCount = SDL_Swap16(vswap->head.chunkCount);
-	vswap->head.firstSprite = SDL_Swap16(vswap->head.firstSprite);
-	vswap->head.firstSound = SDL_Swap16(vswap->head.firstSound);
-#endif	
+	vswap->head.chunkCount = letoh16(vswap->head.chunkCount);
+	vswap->head.firstSprite = letoh16(vswap->head.firstSprite);
+	vswap->head.firstSound = letoh16(vswap->head.firstSound);
 	vswap->chunkOffset = (uint32_t *)(vswap->data + sizeof vswap->head);
 	vswap->chunkLength = (uint16_t *)(vswap->chunkOffset + vswap->head.chunkCount);
 
@@ -46,11 +43,7 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	// Last chunk is not a sound
 	for (int i = vswap->head.firstSound; i < vswap->head.chunkCount - 1; i++)
 	{
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-		const int size = SDL_Swap16(vswap->chunkLength[i]);
-#else
-		const int size = vswap->chunkLength[i];
-#endif
+		const int size = letoh16(vswap->chunkLength[i]);
 		if (size != 4096)
 		{
 			vswap->nSounds++;
@@ -59,22 +52,15 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 	vswap->sounds = calloc(vswap->nSounds, sizeof(CWVSwapSound));
 	for (int i = vswap->head.firstSound, sound = 0; i < vswap->head.chunkCount - 1; i++, sound++)
 	{
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-		const uint32_t off = SDL_Swap32(vswap->chunkOffset[i]);
-		uint16_t size = SDL_Swap16(vswap->chunkLength[i]);
-#else
-		const uint32_t off = vswap->chunkOffset[i];
-		uint16_t size = vswap->chunkLength[i];
-#endif
+		const uint32_t off = letoh32(vswap->chunkOffset[i]);
+		uint16_t size = letoh16(vswap->chunkLength[i]);
 		vswap->sounds[sound].off = off;
 		vswap->sounds[sound].len = size;
 		while (size == 4096)
 		{
 			i++;
 			size = vswap->chunkLength[i];
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			size = SDL_Swap16(size);
-#endif
+			size = letoh16(size);
 			vswap->sounds[sound].len += size;
 		}
 	}

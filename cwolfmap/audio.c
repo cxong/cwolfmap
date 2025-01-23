@@ -159,10 +159,7 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 
 	free(audio->data);
 
-	uint32_t len = audio->head.offsets[audio->head.nOffsets - 1];
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	len = SDL_Swap32(len);
-#endif
+	const uint32_t len = letoh32(audio->head.offsets[audio->head.nOffsets - 1]);
 
 	audio->data = malloc(len);
 	if (fread(audio->data, 1, len, f) != len)
@@ -214,13 +211,9 @@ int CWAudioGetAdlibSoundRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	const int off = SDL_Swap32(audio->head.offsets[i + audio->startAdlibSounds]);
-	*len = SDL_Swap32(audio->head.offsets[i + audio->startAdlibSounds + 1]) - off;
-#else
-	const int off = audio->head.offsets[i + audio->startAdlibSounds];
-	*len = audio->head.offsets[i + audio->startAdlibSounds + 1] - off;
-#endif
+	const int off = letoh32(audio->head.offsets[i + audio->startAdlibSounds]);
+	*len = letoh32(audio->head.offsets[i + audio->startAdlibSounds + 1]) - off;
+
 	if (*len == 0)
 	{
 		fprintf(stderr, "No audio len for track %d\n", i);
@@ -247,10 +240,8 @@ int CWAudioGetAdlibSound(
 	}
 
 	AdLibSound *sound = (const AdLibSound *)rawData;
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	sound->length = SDL_Swap32(sound->length);
-	sound->priority = SDL_Swap16(sound->priority);
-#endif
+	sound->length = letoh32(sound->length);
+	sound->priority = letoh16(sound->priority);
 
 	const uint8_t alBlock = ((sound->block & 7) << 2) | 0x20;
 	AlSetChanInst(&sound->inst, 0);
@@ -296,13 +287,10 @@ int CWAudioGetMusicRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	const int off = SDL_Swap32(audio->head.offsets[i + audio->startMusic]);
-	*len = SDL_Swap32(audio->head.offsets[i + audio->startMusic + 1]) - off;
-#else
-	const int off = audio->head.offsets[i + audio->startMusic];
-	*len = audio->head.offsets[i + audio->startMusic + 1] - off;
-#endif
+
+	const int off = letoh32(audio->head.offsets[i + audio->startMusic]);
+	*len = letoh32(audio->head.offsets[i + audio->startMusic + 1]) - off;
+
 	if (*len == 0)
 	{
 		fprintf(stderr, "No music len for track %d\n", i);
@@ -364,11 +352,7 @@ int CWAudioGetMusic(
 		}
 		else
 		{
-		#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			sqHackLen = SDL_Swap16(*sqHack++);
-		#else
-			sqHackLen = *sqHack++;
-		#endif
+			sqHackLen = letoh16(*sqHack++);
 		}
 		const uint16_t *sqHackPtr = sqHack;
 
@@ -380,11 +364,7 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-				sqHackTime = alTimeCount + SDL_Swap16(*(sqHackPtr + 1));
-#else
-				sqHackTime = alTimeCount + *(sqHackPtr + 1);
-#endif
+				sqHackTime = alTimeCount + letoh16(*(sqHackPtr + 1));
 				sqHackPtr += 2;
 				sqHackLen -= 4;
 			} while (sqHackLen > 0);
@@ -404,11 +384,7 @@ int CWAudioGetMusic(
 		}
 		else
 		{
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			sqHackLen = SDL_Swap16(*sqHack++);
-#else
-			sqHackLen = *sqHack++;
-#endif
+			sqHackLen = letoh16(*sqHack++);
 		}
 		sqHackPtr = sqHack;
 		sqHackTime = 0;
@@ -418,11 +394,7 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-				sqHackTime = alTimeCount + SDL_Swap16(*(sqHackPtr + 1));
-#else
-				sqHackTime = alTimeCount + *(sqHackPtr + 1);
-#endif
+				sqHackTime = alTimeCount + letoh16(*(sqHackPtr + 1));
 				alOut(
 					*(const uint8_t *)sqHackPtr,
 					*(((const uint8_t *)sqHackPtr) + 1));

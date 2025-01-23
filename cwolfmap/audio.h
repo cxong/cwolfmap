@@ -3,8 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <SDL_audio.h>
-
+#include "byteorder.h"
 #include "common.h"
 
 #define MUSIC_SAMPLE_RATE 44100

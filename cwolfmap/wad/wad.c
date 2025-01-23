@@ -14,7 +14,7 @@
 #include "wad_config.h"
 #include "wad.h"
 #include "waderrno.h"
-#include <SDL_endian.h>
+
 #ifndef min
 #define min(x,y) ((x) < (y) ? (x) : (y))
 #endif
@@ -71,11 +71,9 @@ static int WAD_SetupOpenFileHandle(FILE *fp, wadheader_t *header)
 	}
 	
 	buf = fread(header, 1, sizeof(wadheader_t), fp);
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	header->type = SDL_Swap32(header->type);
-	header->entry_count = SDL_Swap32(header->entry_count);
-	header->entry_list_offset = SDL_Swap32(header->entry_list_offset);	
-#endif
+	header->type = letoh32(header->type);
+	header->entry_count = letoh32(header->entry_count);
+	header->entry_list_offset = letoh32(header->entry_list_offset);	
 
 	// Check file size. Smaller than header = not a WAD.
 	if (buf < sizeof(wadheader_t))
@@ -265,13 +263,8 @@ static wadentry_t* WAD_AddEntryCommon(wad_t *wad, const char *name, int32_t leng
 	// FIXME: Something not working here.
 	wadentry_t *newentry = wad->entries[wad->header.entry_count];
 	WAD_EntryNameCopy(name, newentry->name);
-#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-	newentry->length = SDL_Swap32(length);
-	newentry->offset = SDL_Swap32(offset);
-#else
-	newentry->length = length;
-	newentry->offset = offset;
-#endif
+	newentry->length = letoh32(length);
+	newentry->offset = letoh32(offset);
 
 	int i = wad->header.entry_count;
 	while (i > index)
