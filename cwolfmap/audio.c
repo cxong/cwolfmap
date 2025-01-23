@@ -352,7 +352,8 @@ int CWAudioGetMusic(
 		}
 		else
 		{
-			sqHackLen = letoh16(*sqHack++);
+			sqHackLen = *sqHack++;
+			sqHackLen = letoh16(sqHackLen);
 		}
 		const uint16_t *sqHackPtr = sqHack;
 
@@ -384,7 +385,8 @@ int CWAudioGetMusic(
 		}
 		else
 		{
-			sqHackLen = letoh16(*sqHack++);
+			sqHackLen = *sqHack++;
+			sqHackLen = letoh16(sqHackLen);
 		}
 		sqHackPtr = sqHack;
 		sqHackTime = 0;
