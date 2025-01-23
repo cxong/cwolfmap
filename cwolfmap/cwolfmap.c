@@ -191,7 +191,7 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 	// Read as many maps as we can; some versions of the game (SOD MP) truncate
 	// the headers
 	(void)!fread((void *)&map->mapHead, 1, size, f);
-	map->mapHead.magic = htole16(map->mapHead.magic);
+	map->mapHead.magic = letoh16(map->mapHead.magic);
 
 	if (map->mapHead.magic != MAGIC)
 	{
@@ -201,7 +201,7 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 	}
 
 	for (int i = 0; i < CW_LEVELS; i++)
-		map->mapHead.ptr[i] = htole32(map->mapHead.ptr[i]);
+		map->mapHead.ptr[i] = letoh32(map->mapHead.ptr[i]);
 
 
 bail:
@@ -280,14 +280,14 @@ static int LoadLevel(
 	unsigned char *buf = NULL;
 	level->description = NULL;
 	memcpy(&level->header, data + off, sizeof(level->header));
-	level->header.offPlane0 = htole32(level->header.offPlane0);
-	level->header.offPlane1 = htole32(level->header.offPlane1);
-	level->header.offPlane2 = htole32(level->header.offPlane2);
-	level->header.lenPlane0 = htole16(level->header.lenPlane0);
-	level->header.lenPlane1 = htole16(level->header.lenPlane1);
-	level->header.lenPlane2 = htole16(level->header.lenPlane2);
-	level->header.width = htole16(level->header.width);
-	level->header.height = htole16(level->header.height);
+	level->header.offPlane0 = letoh32(level->header.offPlane0);
+	level->header.offPlane1 = letoh32(level->header.offPlane1);
+	level->header.offPlane2 = letoh32(level->header.offPlane2);
+	level->header.lenPlane0 = letoh16(level->header.lenPlane0);
+	level->header.lenPlane1 = letoh16(level->header.lenPlane1);
+	level->header.lenPlane2 = letoh16(level->header.lenPlane2);
+	level->header.width = letoh16(level->header.width);
+	level->header.height = letoh16(level->header.height);
 
 	const int bufSize =
 		level->header.width * level->header.height * sizeof(uint16_t);
@@ -586,7 +586,7 @@ uint16_t CWLevelGetCh(
 	const CWLevel *level, const int planeIndex, const int x, const int y)
 {
 	const CWPlane *plane = &level->planes[planeIndex];
-	uint16_t getch = htole16(plane->plane[y * level->header.width + x]);
+	uint16_t getch = letoh16(plane->plane[y * level->header.width + x]);
 	return getch;
 }
 

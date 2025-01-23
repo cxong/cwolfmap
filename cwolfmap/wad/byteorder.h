@@ -257,7 +257,7 @@ extern "C" {
 #define betoh64cpy(dest, src) BO_ENDIAN_CPY_BYTESWAPS(betoh, 64, dest, src)
 
 
-static inline int ByteOrderTest() {
+static inline int ByteOrderTest(void) {
 	volatile short int x = 0x1234;
 	return *(char*)&x == 0x12 ? BIG_ENDIAN : LITTLE_ENDIAN;
 }
