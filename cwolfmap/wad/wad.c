@@ -14,6 +14,7 @@
 #include "wad_config.h"
 #include "wad.h"
 #include "waderrno.h"
+#include "byteorder.h"
 
 #ifndef min
 #define min(x,y) ((x) < (y) ? (x) : (y))

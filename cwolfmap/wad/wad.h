@@ -12,7 +12,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include "byteorder.h"
 
 // Important defines.
 #define WADTYPE_IWAD 0x44415749
