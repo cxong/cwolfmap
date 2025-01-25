@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
 		}
 
 		Sound *sound = &sounds[nSounds - 1];
+		memset(sound, 0, sizeof *sound);
 		sprintf(sound->name, "MUS%05d", i);
 		if (map.type == CWMAPTYPE_N3D)
 		{
