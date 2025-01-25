@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #define SAMPLE_RATE 44100
-#define AUDIO_FMT AUDIO_S16
+#define AUDIO_FMT AUDIO_S16SYS
 #define AUDIO_CHANNELS 2
 
 typedef struct

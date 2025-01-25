@@ -1,7 +1,6 @@
 #pragma once 
 #include <stdint.h>
 #include <string.h>
-
 // Sounds are unsigned 8-bit mono PCM
 
 #pragma pack(push, 1)

@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MUSIC_SAMPLE_RATE 44100
+#define MUSIC_AUDIO_FMT AUDIO_S16SYS
+#define MUSIC_AUDIO_CHANNELS 2
+
 typedef struct
 {
 	char name[256];
@@ -100,6 +104,7 @@ int main(int argc, char *argv[])
 		}
 
 		Sound *sound = &sounds[nSounds - 1];
+		memset(sound, 0, sizeof *sound);
 		sprintf(sound->name, "MUS%05d", i);
 		if (map.type == CWMAPTYPE_N3D)
 		{

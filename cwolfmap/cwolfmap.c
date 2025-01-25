@@ -191,12 +191,18 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 	// Read as many maps as we can; some versions of the game (SOD MP) truncate
 	// the headers
 	(void)!fread((void *)&map->mapHead, 1, size, f);
+	map->mapHead.magic = letoh16(map->mapHead.magic);
+
 	if (map->mapHead.magic != MAGIC)
 	{
 		err = -1;
 		fprintf(stderr, "Unexpected magic value: %x\n", map->mapHead.magic);
 		goto bail;
 	}
+
+	for (int i = 0; i < CW_LEVELS; i++)
+		map->mapHead.ptr[i] = letoh32(map->mapHead.ptr[i]);
+
 
 bail:
 	if (f)
@@ -274,6 +280,14 @@ static int LoadLevel(
 	unsigned char *buf = NULL;
 	level->description = NULL;
 	memcpy(&level->header, data + off, sizeof(level->header));
+	level->header.offPlane0 = letoh32(level->header.offPlane0);
+	level->header.offPlane1 = letoh32(level->header.offPlane1);
+	level->header.offPlane2 = letoh32(level->header.offPlane2);
+	level->header.lenPlane0 = letoh16(level->header.lenPlane0);
+	level->header.lenPlane1 = letoh16(level->header.lenPlane1);
+	level->header.lenPlane2 = letoh16(level->header.lenPlane2);
+	level->header.width = letoh16(level->header.width);
+	level->header.height = letoh16(level->header.height);
 
 	const int bufSize =
 		level->header.width * level->header.height * sizeof(uint16_t);
@@ -572,7 +586,8 @@ uint16_t CWLevelGetCh(
 	const CWLevel *level, const int planeIndex, const int x, const int y)
 {
 	const CWPlane *plane = &level->planes[planeIndex];
-	return plane->plane[y * level->header.width + x];
+	uint16_t getch = letoh16(plane->plane[y * level->header.width + x]);
+	return getch;
 }
 
 static const CWTile tileMap[] = {

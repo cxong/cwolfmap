@@ -159,7 +159,8 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 
 	free(audio->data);
 
-	const uint32_t len = audio->head.offsets[audio->head.nOffsets - 1];
+	const uint32_t len = letoh32(audio->head.offsets[audio->head.nOffsets - 1]);
+
 	audio->data = malloc(len);
 	if (fread(audio->data, 1, len, f) != len)
 	{
@@ -210,8 +211,9 @@ int CWAudioGetAdlibSoundRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-	const int off = audio->head.offsets[i + audio->startAdlibSounds];
-	*len = audio->head.offsets[i + audio->startAdlibSounds + 1] - off;
+	const int off = letoh32(audio->head.offsets[i + audio->startAdlibSounds]);
+	*len = letoh32(audio->head.offsets[i + audio->startAdlibSounds + 1]) - off;
+
 	if (*len == 0)
 	{
 		fprintf(stderr, "No audio len for track %d\n", i);
@@ -237,7 +239,10 @@ int CWAudioGetAdlibSound(
 		goto bail;
 	}
 
-	const AdLibSound *sound = (const AdLibSound *)rawData;
+	AdLibSound *sound = (const AdLibSound *)rawData;
+	sound->length = letoh32(sound->length);
+	sound->priority = letoh16(sound->priority);
+
 	const uint8_t alBlock = ((sound->block & 7) << 2) | 0x20;
 	AlSetChanInst(&sound->inst, 0);
 
@@ -282,8 +287,10 @@ int CWAudioGetMusicRaw(
 	const CWAudio *audio, const int i, const char **data, size_t *len)
 {
 	int err = 0;
-	const int off = audio->head.offsets[i + audio->startMusic];
-	*len = audio->head.offsets[i + audio->startMusic + 1] - off;
+
+	const int off = letoh32(audio->head.offsets[i + audio->startMusic]);
+	*len = letoh32(audio->head.offsets[i + audio->startMusic + 1]) - off;
+
 	if (*len == 0)
 	{
 		fprintf(stderr, "No music len for track %d\n", i);
@@ -346,6 +353,7 @@ int CWAudioGetMusic(
 		else
 		{
 			sqHackLen = *sqHack++;
+			sqHackLen = letoh16(sqHackLen);
 		}
 		const uint16_t *sqHackPtr = sqHack;
 
@@ -357,7 +365,7 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
-				sqHackTime = alTimeCount + *(sqHackPtr + 1);
+				sqHackTime = alTimeCount + letoh16(*(sqHackPtr + 1));
 				sqHackPtr += 2;
 				sqHackLen -= 4;
 			} while (sqHackLen > 0);
@@ -378,6 +386,7 @@ int CWAudioGetMusic(
 		else
 		{
 			sqHackLen = *sqHack++;
+			sqHackLen = letoh16(sqHackLen);
 		}
 		sqHackPtr = sqHack;
 		sqHackTime = 0;
@@ -387,7 +396,7 @@ int CWAudioGetMusic(
 			{
 				if (sqHackTime > alTimeCount)
 					break;
-				sqHackTime = alTimeCount + *(sqHackPtr + 1);
+				sqHackTime = alTimeCount + letoh16(*(sqHackPtr + 1));
 				alOut(
 					*(const uint8_t *)sqHackPtr,
 					*(((const uint8_t *)sqHackPtr) + 1));
