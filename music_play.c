@@ -133,6 +133,7 @@ int main(int argc, char *argv[])
 		}
 		if (cmd >= nSounds)
 		{
+			Mix_PauseMusic();
 			continue;
 		}
 		if (map.type == CWMAPTYPE_N3D)
