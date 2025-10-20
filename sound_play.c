@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #define SAMPLE_RATE 44100
-#define AUDIO_FMT AUDIO_S16
+#define AUDIO_FMT AUDIO_S16SYS
 #define AUDIO_CHANNELS 2
 #define MUSIC_RATE 700
 #define SAMPLES_PER_MUSIC_TICK (SAMPLE_RATE / MUSIC_RATE)
