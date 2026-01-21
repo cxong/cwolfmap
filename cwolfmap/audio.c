@@ -106,7 +106,6 @@ int CWAudioLoadHead(CWAudioHead *head, const char *path)
 	FILE *f = fopen(path, "rb");
 	if (!f)
 	{
-		err = -1;
 		fprintf(stderr, "Failed to read %s\n", path);
 		goto bail;
 	}
@@ -152,7 +151,6 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 	FILE *f = fopen(path, "rb");
 	if (!f)
 	{
-		err = -1;
 		fprintf(stderr, "Failed to read %s\n", path);
 		goto bail;
 	}
