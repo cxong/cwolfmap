@@ -1,4 +1,5 @@
 #include "cwolfmap.h"
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,27 +29,33 @@
 #define PATH_MAX 4096
 #endif
 
+static bool fileExists(const char *fmt, ...)
+{
+	char buf[PATH_MAX];
+	va_list argptr;
+	va_start(argptr, fmt);
+	vsprintf(buf, fmt, argptr);
+	va_end(argptr);
+	return access(buf, F_OK) != -1;
+}
+
 CWMapType CWGetType(
 	const char *path, const char **ext, const char **ext1,
 	const int spearMission)
 {
-	char pathBuf[PATH_MAX];
-	sprintf(pathBuf, "%s/MAPHEAD.WL1", path);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/MAPHEAD.WL1", path))
 	{
 		if (ext && ext1)
 			*ext = *ext1 = "WL1";
 		return CWMAPTYPE_WL1;
 	}
-	sprintf(pathBuf, "%s/MAPHEAD.WL6", path);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/MAPHEAD.WL6", path))
 	{
 		if (ext && ext1)
 			*ext = *ext1 = "WL6";
 		return CWMAPTYPE_WL6;
 	}
-	sprintf(pathBuf, "%s/MAPHEAD.SD%d", path, spearMission);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/MAPHEAD.SD%d", path, spearMission))
 	{
 		if (ext && ext1)
 		{
@@ -72,34 +79,38 @@ CWMapType CWGetType(
 	}
 	else
 	{
-		sprintf(pathBuf, "%s/MAPHEAD.SOD", path);
-		if (access(pathBuf, F_OK) != -1)
+		if (fileExists("%s/MAPHEAD.SOD", path))
 		{
 			if (ext && ext1)
 				*ext = *ext1 = "SOD";
 			return CWMAPTYPE_SOD;
 		}
 	}
-	sprintf(pathBuf, "%s/MAPHEAD.BS6", path);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/MAPHEAD.BS6", path))
 	{
 		if (ext && ext1)
 			*ext = *ext1 = "BS6";
 		return CWMAPTYPE_BS6;
 	}
-	sprintf(pathBuf, "%s/MAPHEAD.BS1", path);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/MAPHEAD.BS1", path))
 	{
 		if (ext && ext1)
 			*ext = *ext1 = "BS1";
 		return CWMAPTYPE_BS1;
 	}
-	sprintf(pathBuf, "%s/maphead.n3d", path);
-	if (access(pathBuf, F_OK) != -1)
+	if (fileExists("%s/maphead.n3d", path))
 	{
 		if (ext && ext1)
 			*ext = *ext1 = "n3d";
 		return CWMAPTYPE_N3D;
+	}
+	if (fileExists("%s/base/chunk_4.resources", path) &&
+		fileExists("%s/base/gameresources.resources", path) &&
+		fileExists("%s/base/sound/soundbanks/pc/sound.pack", path))
+	{
+		if (ext && ext1)
+			*ext = *ext1 = "wl6";
+		return CWMAPTYPE_STO;
 	}
 	return CWMAPTYPE_UNKNOWN;
 }
@@ -204,7 +215,6 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 
 	for (int i = 0; i < CW_LEVELS; i++)
 		map->mapHead.ptr[i] = letoh32(map->mapHead.ptr[i]);
-
 
 bail:
 	if (f)
