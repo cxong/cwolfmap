@@ -72,6 +72,7 @@ Debug/
 *.vcxproj*
 *.dir/
 x64/
+enc_temp_folder/
 
 # VS Code
 .vscode/
@@ -85,3 +86,9 @@ Makefile
 
 # Xcode
 *.xcodeproj/
+
+# Test files
+*.pk3
+*.wl6
+*.txt
+*.ogg
