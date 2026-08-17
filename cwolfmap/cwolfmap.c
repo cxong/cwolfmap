@@ -20,6 +20,8 @@
 #include "audio_n3d.h"
 #include "audiowl6.h"
 #include "expand.h"
+#include "idcl/idcl.h"
+#include "idcl/kraken/kraken.h"
 #include "n3d.h"
 
 // TODO: use map header magic value
@@ -132,6 +134,63 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		err = -1;
 		fprintf(stderr, "Cannot find map at %s\n", path);
 		goto bail;
+	}
+
+	// Additional step for Wolfstone: extract files from idcl containers and
+	// read as memory files
+	if (map->type == CWMAPTYPE_STO)
+	{
+		FileLump *lumps;
+		int numLumps;
+		snprintf(pathBuf, sizeof(pathBuf), "%s/base/chunk_4.resources", path);
+		if (LoadWolf2Lumps(pathBuf, &lumps, &numLumps) != 0)
+		{
+			fprintf(stderr, "Error loading lumps %s\n", pathBuf);
+			goto bail;
+		}
+		for (int i = 0; i < numLumps; ++i)
+		{
+			const FileLump *lump = &lumps[i];
+			if (lump->compressedSize != lump->size)
+			{
+				// Decompress
+				uint8_t *dst = malloc(lump->size);
+				int res = Kraken_Decompress(
+					lump->data, lump->compressedSize, dst, lump->size);
+				if (res < 0)
+				{
+					fprintf(
+						stderr, "Decompression failed with error code %d\n",
+						res);
+					return 1;
+				}
+				if (res != lump->size)
+				{
+					fprintf(
+						stderr,
+						"Decompressed size mismatch: expected %llu, got %d\n",
+						lump->size, res);
+					return 1;
+				}
+				/*FILE *f = fopen(lump->name, "wb");
+				fwrite(dst, 1, lump->size, f);
+				fclose(f);*/
+				free(dst);
+			}
+			else
+			{
+				/*FILE *f = fopen(lump->name, "wb");
+				fwrite(lump->data, 1, lump->size, f);
+				fclose(f);*/
+			}
+		}
+		// Free allocated memory for both sets of lumps
+		for (int i = 0; i < numLumps; ++i)
+		{
+			free(lumps[i].data);
+		}
+		free(lumps);
+		numLumps = 0;
 	}
 
 #define _TRY_LOAD(_fn, _loadFunc, ...)                                        \

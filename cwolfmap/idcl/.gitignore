@@ -1,0 +1,11 @@
+CMakeFiles/
+.vs/
+*.vcxproj*
+CMakeCache.txt
+cmake_install.cmake
+*.sln
+Debug/
+*.dir/
+x64/
+Release/
+enc_temp_folder/
