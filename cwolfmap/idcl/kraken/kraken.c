@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef _MSC_VER
 
 #include <stdlib.h>
+#define bswap_16(x) _byteswap_ushort(x)
 #define bswap_32(x) _byteswap_ulong(x)
 #define bswap_64(x) _byteswap_uint64(x)
 
@@ -31,24 +32,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Mac OS X / Darwin features
 #include <libkern/OSByteOrder.h>
+#define bswap_16(x) OSSwapInt16(x)
 #define bswap_32(x) OSSwapInt32(x)
 #define bswap_64(x) OSSwapInt64(x)
 
 #elif defined(__sun) || defined(sun)
 
 #include <sys/byteorder.h>
+#define bswap_16(x) BSWAP_16(x)
 #define bswap_32(x) BSWAP_32(x)
 #define bswap_64(x) BSWAP_64(x)
 
 #elif defined(__FreeBSD__)
 
 #include <sys/endian.h>
+#define bswap_16(x) bswap16(x)
 #define bswap_32(x) bswap32(x)
 #define bswap_64(x) bswap64(x)
 
 #elif defined(__OpenBSD__)
 
 #include <sys/types.h>
+#define bswap_16(x) swap16(x)
 #define bswap_32(x) swap32(x)
 #define bswap_64(x) swap64(x)
 
@@ -57,6 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <machine/bswap.h>
 #include <sys/types.h>
 #if defined(__BSWAP_RENAME) && !defined(__bswap_32)
+#define bswap_16(x) bswap16(x)
 #define bswap_32(x) bswap32(x)
 #define bswap_64(x) bswap64(x)
 #endif
@@ -67,8 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #endif
 
-static inline unsigned char bit_scan_forward(
-	unsigned long *index, unsigned long mask)
+static unsigned char bit_scan_forward(unsigned long *index, unsigned long mask)
 {
 #if defined(_MSC_VER)
 	return _BitScanForward(index, mask);
@@ -91,8 +96,7 @@ static inline unsigned char bit_scan_forward(
 #endif
 }
 
-static inline unsigned char bit_scan_reverse(
-	unsigned long *index, unsigned long mask)
+static unsigned char bit_scan_reverse(unsigned long *index, unsigned long mask)
 {
 #if defined(_MSC_VER)
 	return _BitScanReverse(index, mask);
@@ -110,6 +114,15 @@ static inline unsigned char bit_scan_reverse(
 	while ((mask & (1UL << *index)) == 0)
 		(*index)--;
 	return 1;
+#endif
+}
+
+static int rotl(unsigned int x, int r)
+{
+#ifdef _MSC_VER
+	return _rotl(x, r);
+#else
+	return (x << r) | (x >> (32 - r);
 #endif
 }
 
@@ -427,7 +440,7 @@ uint32_t BitReader_ReadDistance(BitReader *bits, uint32_t v)
 	if (v < 0xF0)
 	{
 		n = (v >> 4) + 4;
-		w = _rotl(bits->bits | 1, n);
+		w = rotl(bits->bits | 1, n);
 		bits->bitpos += n;
 		m = (2 << n) - 1;
 		bits->bits = w & ~m;
@@ -436,7 +449,7 @@ uint32_t BitReader_ReadDistance(BitReader *bits, uint32_t v)
 	else
 	{
 		n = v - 0xF0 + 4;
-		w = _rotl(bits->bits | 1, n);
+		w = rotl(bits->bits | 1, n);
 		bits->bitpos += n;
 		m = (2 << n) - 1;
 		bits->bits = w & ~m;
@@ -457,7 +470,7 @@ uint32_t BitReader_ReadDistanceB(BitReader *bits, uint32_t v)
 	if (v < 0xF0)
 	{
 		n = (v >> 4) + 4;
-		w = _rotl(bits->bits | 1, n);
+		w = rotl(bits->bits | 1, n);
 		bits->bitpos += n;
 		m = (2 << n) - 1;
 		bits->bits = w & ~m;
@@ -466,7 +479,7 @@ uint32_t BitReader_ReadDistanceB(BitReader *bits, uint32_t v)
 	else
 	{
 		n = v - 0xF0 + 4;
-		w = _rotl(bits->bits | 1, n);
+		w = rotl(bits->bits | 1, n);
 		bits->bitpos += n;
 		m = (2 << n) - 1;
 		bits->bits = w & ~m;
@@ -629,7 +642,7 @@ const uint8_t *Kraken_ParseQuantumHeader(
 
 const uint8_t *LZNA_ParseWholeMatchInfo(const uint8_t *p, uint32_t *dist)
 {
-	uint32_t v = _byteswap_ushort(*(const uint16_t *)p);
+	uint32_t v = bswap_16(*(const uint16_t *)p);
 
 	if (v < 0x8000)
 	{
@@ -755,7 +768,8 @@ bool Kraken_DecodeBytesCore(HuffReader *hr, HuffRevLut *lut)
 			src_bits |= *(const uint32_t *)src << src_bitpos;
 			src += (31 - src_bitpos) >> 3;
 
-			src_end_bits |= bswap_32(*(const uint32_t *)src_end) << src_end_bitpos;
+			src_end_bits |= bswap_32(*(const uint32_t *)src_end)
+							<< src_end_bitpos;
 			src_end -= (31 - src_end_bitpos) >> 3;
 
 			src_mid_bits |= *(const uint32_t *)src_mid << src_mid_bitpos;
@@ -1647,10 +1661,10 @@ int Kraken_DecodeMultiArray(
 		int numbits_f = interval_lenlog2[i + 0];
 		int numbits_b = interval_lenlog2[i + 1];
 
-		bits_f = _rotl(bits_f | 1, numbits_f);
+		bits_f = rotl(bits_f | 1, numbits_f);
 		bitpos_f += numbits_f - 8 * ((bitpos_f + 7) >> 3);
 
-		bits_b = _rotl(bits_b | 1, numbits_b);
+		bits_b = rotl(bits_b | 1, numbits_b);
 		bitpos_b += numbits_b - 8 * ((bitpos_b + 7) >> 3);
 
 		int value_f = bits_f & bitmasks[numbits_f];
@@ -1668,7 +1682,7 @@ int Kraken_DecodeMultiArray(
 	{
 		bits_f |= bswap_32(*(const uint32_t *)f) >> (24 - bitpos_f);
 		int numbits_f = interval_lenlog2[i];
-		bits_f = _rotl(bits_f | 1, numbits_f);
+		bits_f = rotl(bits_f | 1, numbits_f);
 		int value_f = bits_f & bitmasks[numbits_f];
 		decoded_intervals[i + 0] = value_f;
 	}
@@ -1972,7 +1986,7 @@ int Kraken_DecodeBytes(
 		if (force_memmove)
 			memmove(*output, src, src_size);
 		else
-			*output = (uint8_t *)src;
+			*output = src;
 		return (int)(src + src_size - src_org);
 	}
 
