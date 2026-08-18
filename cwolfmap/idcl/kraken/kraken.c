@@ -21,6 +21,98 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+
+#include <stdlib.h>
+#define bswap_32(x) _byteswap_ulong(x)
+#define bswap_64(x) _byteswap_uint64(x)
+
+#elif defined(__APPLE__)
+
+// Mac OS X / Darwin features
+#include <libkern/OSByteOrder.h>
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+
+#elif defined(__sun) || defined(sun)
+
+#include <sys/byteorder.h>
+#define bswap_32(x) BSWAP_32(x)
+#define bswap_64(x) BSWAP_64(x)
+
+#elif defined(__FreeBSD__)
+
+#include <sys/endian.h>
+#define bswap_32(x) bswap32(x)
+#define bswap_64(x) bswap64(x)
+
+#elif defined(__OpenBSD__)
+
+#include <sys/types.h>
+#define bswap_32(x) swap32(x)
+#define bswap_64(x) swap64(x)
+
+#elif defined(__NetBSD__)
+
+#include <machine/bswap.h>
+#include <sys/types.h>
+#if defined(__BSWAP_RENAME) && !defined(__bswap_32)
+#define bswap_32(x) bswap32(x)
+#define bswap_64(x) bswap64(x)
+#endif
+
+#else
+
+#include <byteswap.h>
+
+#endif
+
+static inline unsigned char bit_scan_forward(
+	unsigned long *index, unsigned long mask)
+{
+#if defined(_MSC_VER)
+	return _BitScanForward(index, mask);
+#elif defined(__GNUC__) || defined(__clang__)
+	if (mask == 0)
+		return 0;
+	*index = (unsigned long)__builtin_ctzl(mask);
+	return 1;
+#else
+	if (mask == 0)
+		return 0;
+
+	*index = 0;
+	while ((mask & 1) == 0)
+	{
+		mask >>= 1;
+		(*index)++;
+	}
+	return 1;
+#endif
+}
+
+static inline unsigned char bit_scan_reverse(
+	unsigned long *index, unsigned long mask)
+{
+#if defined(_MSC_VER)
+	return _BitScanReverse(index, mask);
+#elif defined(__GNUC__) || defined(__clang__)
+	if (mask == 0)
+		return 0;
+	*index =
+		(unsigned long)(sizeof(unsigned long) * 8 - 1 - __builtin_clzl(mask));
+	return 1;
+#else
+	if (mask == 0)
+		return 0;
+
+	*index = sizeof(unsigned long) * 8 - 1;
+	while ((mask & (1UL << *index)) == 0)
+		(*index)--;
+	return 1;
+#endif
+}
+
 // Header in front of each 256k block
 typedef struct KrakenHeader
 {
@@ -171,14 +263,14 @@ void FreeAligned(void *p)
 uint32_t BSR(uint32_t x)
 {
 	unsigned long index = ~0u;
-	_BitScanReverse(&index, x);
+	bit_scan_reverse(&index, x);
 	return index;
 }
 
 uint32_t BSF(uint32_t x)
 {
 	unsigned long index = ~0u;
-	_BitScanForward(&index, x);
+	bit_scan_forward(&index, x);
 	return index;
 }
 
@@ -288,7 +380,7 @@ int BitReader_ReadGamma(BitReader *bits)
 	int r;
 	if (bits->bits != 0)
 	{
-		_BitScanReverse(&bitresult, bits->bits);
+		bit_scan_reverse(&bitresult, bits->bits);
 		n = 31 - bitresult;
 	}
 	else
@@ -306,7 +398,7 @@ int BitReader_ReadGamma(BitReader *bits)
 int CountLeadingZeros(uint32_t bits)
 {
 	unsigned long x = 32;
-	_BitScanReverse(&x, bits);
+	bit_scan_reverse(&x, bits);
 	return 31 - x;
 }
 
@@ -317,7 +409,7 @@ int BitReader_ReadGammaX(BitReader *bits, int forced)
 	int r;
 	if (bits->bits != 0)
 	{
-		_BitScanReverse(&bitresult, bits->bits);
+		bit_scan_reverse(&bitresult, bits->bits);
 		int lz = 31 - bitresult;
 		assert(lz < 24);
 		r = (bits->bits >> (31 - lz - forced)) + ((lz - 1) << forced);
@@ -394,7 +486,7 @@ bool BitReader_ReadLength(BitReader *bits, uint32_t *v)
 	unsigned long bitresult = 32;
 	int n;
 	uint32_t rv;
-	_BitScanReverse(&bitresult, bits->bits);
+	bit_scan_reverse(&bitresult, bits->bits);
 	n = 31 - bitresult;
 	if (n > 12)
 		return false;
@@ -416,7 +508,7 @@ bool BitReader_ReadLengthB(BitReader *bits, uint32_t *v)
 	unsigned long bitresult = 32;
 	int n;
 	uint32_t rv;
-	_BitScanReverse(&bitresult, bits->bits);
+	bit_scan_reverse(&bitresult, bits->bits);
 	n = 31 - bitresult;
 	if (n > 12)
 		return false;
@@ -437,7 +529,7 @@ int Log2RoundUp(uint32_t v)
 	if (v > 1)
 	{
 		unsigned long idx;
-		_BitScanReverse(&idx, v - 1);
+		bit_scan_reverse(&idx, v - 1);
 		return idx + 1;
 	}
 	else
@@ -664,8 +756,7 @@ bool Kraken_DecodeBytesCore(HuffReader *hr, HuffRevLut *lut)
 			src_bits |= *(uint32_t *)src << src_bitpos;
 			src += (31 - src_bitpos) >> 3;
 
-			src_end_bits |= _byteswap_ulong(*(uint32_t *)src_end)
-							<< src_end_bitpos;
+			src_end_bits |= bswap_32(*(uint32_t *)src_end) << src_end_bitpos;
 			src_end -= (31 - src_end_bitpos) >> 3;
 
 			src_mid_bits |= *(uint32_t *)src_mid << src_mid_bitpos;
@@ -884,7 +975,7 @@ int BitReader_ReadFluff(BitReader *bits, int num_symbols)
 
 	x *= 2;
 
-	_BitScanReverse(&y, x - 1);
+	bit_scan_reverse(&y, x - 1);
 	y += 1;
 
 	uint32_t v = bits->bits >> (32 - y);
@@ -1013,7 +1104,7 @@ bool DecodeGolombRiceLengths(uint8_t *dst, size_t size, BitReader2 *br)
 	{
 		p--;
 		unsigned long q = 9;
-		_BitScanForward(&q, v);
+		bit_scan_forward(&q, v);
 		bitpos = 8 - q;
 	}
 	br->p = p;
@@ -1048,13 +1139,13 @@ bool DecodeGolombRiceBits(
 		{
 			// Read the next uint8_t
 			uint64_t bits =
-				(uint8_t)(_byteswap_ulong(*(uint32_t *)p) >> (24 - bitpos));
+				(uint8_t)(bswap_32(*(const uint32_t *)p) >> (24 - bitpos));
 			p += 1;
 			// Expand each bit into each uint8_t of the uint64_t.
 			bits = (bits | (bits << 28)) & 0xF0000000Full;
 			bits = (bits | (bits << 14)) & 0x3000300030003ull;
 			bits = (bits | (bits << 7)) & 0x0101010101010101ull;
-			*(uint64_t *)dst = *(uint64_t *)dst * 2 + _byteswap_uint64(bits);
+			*(uint64_t *)dst = *(uint64_t *)dst * 2 + bswap_64(bits);
 			dst += 8;
 		} while (dst < dst_end);
 	}
@@ -1064,13 +1155,13 @@ bool DecodeGolombRiceBits(
 		{
 			// Read the next 2 bytes
 			uint64_t bits =
-				(uint16_t)(_byteswap_ulong(*(uint32_t *)p) >> (16 - bitpos));
+				(uint16_t)(bswap_32(*(const uint32_t *)p) >> (16 - bitpos));
 			p += 2;
 			// Expand each bit into each uint8_t of the uint64_t.
 			bits = (bits | (bits << 24)) & 0xFF000000FFull;
 			bits = (bits | (bits << 12)) & 0xF000F000F000Full;
 			bits = (bits | (bits << 6)) & 0x0303030303030303ull;
-			*(uint64_t *)dst = *(uint64_t *)dst * 4 + _byteswap_uint64(bits);
+			*(uint64_t *)dst = *(uint64_t *)dst * 4 + bswap_64(bits);
 			dst += 8;
 		} while (dst < dst_end);
 	}
@@ -1081,13 +1172,13 @@ bool DecodeGolombRiceBits(
 		{
 			// Read the next 3 bytes
 			uint64_t bits =
-				(_byteswap_ulong(*(uint32_t *)p) >> (8 - bitpos)) & 0xffffff;
+				(bswap_32(*(const uint32_t *)p) >> (8 - bitpos)) & 0xffffff;
 			p += 3;
 			// Expand each bit into each uint8_t of the uint64_t.
 			bits = (bits | (bits << 20)) & 0xFFF00000FFFull;
 			bits = (bits | (bits << 10)) & 0x3F003F003F003Full;
 			bits = (bits | (bits << 5)) & 0x0707070707070707ull;
-			*(uint64_t *)dst = *(uint64_t *)dst * 8 + _byteswap_uint64(bits);
+			*(uint64_t *)dst = *(uint64_t *)dst * 8 + bswap_64(bits);
 			dst += 8;
 		} while (dst < dst_end);
 	}
@@ -1548,7 +1639,7 @@ int Kraken_DecodeMultiArray(
 	int i;
 	for (i = 0; i + 2 <= num_lens; i += 2)
 	{
-		bits_f |= _byteswap_ulong(*(uint32_t *)f) >> (24 - bitpos_f);
+		bits_f |= bswap_32(*(uint32_t *)f) >> (24 - bitpos_f);
 		f += (bitpos_f + 7) >> 3;
 
 		bits_b |= ((uint32_t *)b)[-1] >> (24 - bitpos_b);
@@ -1576,7 +1667,7 @@ int Kraken_DecodeMultiArray(
 	// read final one since above loop reads 2
 	if (i < num_lens)
 	{
-		bits_f |= _byteswap_ulong(*(uint32_t *)f) >> (24 - bitpos_f);
+		bits_f |= bswap_32(*(uint32_t *)f) >> (24 - bitpos_f);
 		int numbits_f = interval_lenlog2[i];
 		bits_f = _rotl(bits_f | 1, numbits_f);
 		int value_f = bits_f & bitmasks[numbits_f];
