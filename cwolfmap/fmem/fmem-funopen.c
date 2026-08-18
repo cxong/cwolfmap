@@ -49,7 +49,7 @@ static int mem_write(void *cookie, const char *buf, int size)
         errno = EOVERFLOW;
         return -1;
     }
-    return copied;
+    return (int)copied;
 }
 
 static int mem_read(void *cookie, char *buf, int size)
@@ -73,7 +73,7 @@ static int mem_read(void *cookie, char *buf, int size)
         errno = EOVERFLOW;
         return -1;
     }
-    return copied;
+    return (int)copied;
 }
 
 static off_t mem_seek(void *cookie, off_t off, int whence)
@@ -104,6 +104,7 @@ static int mem_close(void *cookie)
 
 FILE *fmem_open(fmem *file, const char *mode)
 {
+	(void)mode;
     union fmem_conv cv = { .fm = file };
 
     free(cv.buf->mem);

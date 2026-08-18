@@ -264,14 +264,14 @@ uint32_t BSR(uint32_t x)
 {
 	unsigned long index = ~0u;
 	bit_scan_reverse(&index, x);
-	return index;
+	return (uint32_t)index;
 }
 
 uint32_t BSF(uint32_t x)
 {
 	unsigned long index = ~0u;
 	bit_scan_forward(&index, x);
-	return index;
+	return (uint32_t)index;
 }
 
 // Read more bytes to make sure we always have at least 24 bits in |bits|.
@@ -381,7 +381,7 @@ int BitReader_ReadGamma(BitReader *bits)
 	if (bits->bits != 0)
 	{
 		bit_scan_reverse(&bitresult, bits->bits);
-		n = 31 - bitresult;
+		n = (int)(31 - bitresult);
 	}
 	else
 	{
@@ -399,7 +399,7 @@ int CountLeadingZeros(uint32_t bits)
 {
 	unsigned long x = 32;
 	bit_scan_reverse(&x, bits);
-	return 31 - x;
+	return (int)(31 - x);
 }
 
 // Reads a gamma value with |forced| number of forced bits.
@@ -410,7 +410,7 @@ int BitReader_ReadGammaX(BitReader *bits, int forced)
 	if (bits->bits != 0)
 	{
 		bit_scan_reverse(&bitresult, bits->bits);
-		int lz = 31 - bitresult;
+		int lz = (int)(31 - bitresult);
 		assert(lz < 24);
 		r = (bits->bits >> (31 - lz - forced)) + ((lz - 1) << forced);
 		bits->bits <<= lz + forced + 1;
@@ -487,7 +487,7 @@ bool BitReader_ReadLength(BitReader *bits, uint32_t *v)
 	int n;
 	uint32_t rv;
 	bit_scan_reverse(&bitresult, bits->bits);
-	n = 31 - bitresult;
+	n = (int)(31 - bitresult);
 	if (n > 12)
 		return false;
 	bits->bitpos += n;
@@ -506,10 +506,9 @@ bool BitReader_ReadLength(BitReader *bits, uint32_t *v)
 bool BitReader_ReadLengthB(BitReader *bits, uint32_t *v)
 {
 	unsigned long bitresult = 32;
-	int n;
 	uint32_t rv;
 	bit_scan_reverse(&bitresult, bits->bits);
-	n = 31 - bitresult;
+	int n = (int)(31 - bitresult);
 	if (n > 12)
 		return false;
 	bits->bitpos += n;
@@ -530,7 +529,7 @@ int Log2RoundUp(uint32_t v)
 	{
 		unsigned long idx;
 		bit_scan_reverse(&idx, v - 1);
-		return idx + 1;
+		return (int)(idx + 1);
 	}
 	else
 	{
@@ -558,7 +557,7 @@ static inline void COPY_64_ADD(uint8_t *d, const uint8_t *s, const uint8_t *t)
 	}
 }
 
-KrakenDecoder *Kraken_Create()
+KrakenDecoder *Kraken_Create(void)
 {
 	size_t scratch_size = 0x6C000;
 	size_t memory_needed = sizeof(KrakenDecoder) + scratch_size;
@@ -630,7 +629,7 @@ const uint8_t *Kraken_ParseQuantumHeader(
 
 const uint8_t *LZNA_ParseWholeMatchInfo(const uint8_t *p, uint32_t *dist)
 {
-	uint32_t v = _byteswap_ushort(*(uint16_t *)p);
+	uint32_t v = _byteswap_ushort(*(const uint16_t *)p);
 
 	if (v < 0x8000)
 	{
@@ -753,13 +752,13 @@ bool Kraken_DecodeBytesCore(HuffReader *hr, HuffRevLut *lut)
 
 		while (dst < dst_end && src <= src_mid && src_mid <= src_end)
 		{
-			src_bits |= *(uint32_t *)src << src_bitpos;
+			src_bits |= *(const uint32_t *)src << src_bitpos;
 			src += (31 - src_bitpos) >> 3;
 
-			src_end_bits |= bswap_32(*(uint32_t *)src_end) << src_end_bitpos;
+			src_end_bits |= bswap_32(*(const uint32_t *)src_end) << src_end_bitpos;
 			src_end -= (31 - src_end_bitpos) >> 3;
 
-			src_mid_bits |= *(uint32_t *)src_mid << src_mid_bitpos;
+			src_mid_bits |= *(const uint32_t *)src_mid << src_mid_bitpos;
 			src_mid += (31 - src_mid_bitpos) >> 3;
 
 			src_bitpos |= 0x18;
@@ -826,7 +825,7 @@ bool Kraken_DecodeBytesCore(HuffReader *hr, HuffRevLut *lut)
 		}
 		else
 		{
-			src_bits |= *(uint16_t *)src << src_bitpos;
+			src_bits |= *(const uint16_t *)src << src_bitpos;
 		}
 		k = src_bits & 0x7FF;
 		n = lut->bits2len[k];
@@ -848,10 +847,10 @@ bool Kraken_DecodeBytesCore(HuffReader *hr, HuffRevLut *lut)
 			}
 			else
 			{
-				unsigned int v = *(uint16_t *)(src_end - 2);
+				unsigned int v = *(const uint16_t *)(src_end - 2);
 				src_end_bits |= (((v >> 8) | (v << 8)) & 0xffff)
 								<< src_end_bitpos;
-				src_mid_bits |= *(uint16_t *)src_mid << src_mid_bitpos;
+				src_mid_bits |= *(const uint16_t *)src_mid << src_mid_bitpos;
 			}
 			n = lut->bits2len[src_end_bits & 0x7FF];
 			*dst++ = lut->bits2sym[src_end_bits & 0x7FF];
@@ -1105,7 +1104,7 @@ bool DecodeGolombRiceLengths(uint8_t *dst, size_t size, BitReader2 *br)
 		p--;
 		unsigned long q = 9;
 		bit_scan_forward(&q, v);
-		bitpos = 8 - q;
+		bitpos = (int)(8 - q);
 	}
 	br->p = p;
 	br->bitpos = bitpos;
@@ -1404,7 +1403,7 @@ int Kraken_DecodeBytes_Type12(
 	{
 		if (src + 3 > src_end)
 			return -1;
-		split_mid = *(uint16_t *)src;
+		split_mid = *(const uint16_t *)src;
 		src += 2;
 		hr.output = output;
 		hr.output_end = output + output_size;
@@ -1426,16 +1425,16 @@ int Kraken_DecodeBytes_Type12(
 			return -1;
 
 		half_output_size = (output_size + 1) >> 1;
-		split_mid = *(uint32_t *)src & 0xFFFFFF;
+		split_mid = *(const uint32_t *)src & 0xFFFFFF;
 		src += 3;
 		if (split_mid > (src_end - src))
 			return -1;
 		src_mid = src + split_mid;
-		split_left = *(uint16_t *)src;
+		split_left = *(const uint16_t *)src;
 		src += 2;
 		if (src_mid - src < split_left + 2 || src_end - src_mid < 3)
 			return -1;
-		split_right = *(uint16_t *)src_mid;
+		split_right = *(const uint16_t *)src_mid;
 		if (src_end - (src_mid + 2) < split_right + 2)
 			return -1;
 
@@ -1549,7 +1548,7 @@ int Kraken_DecodeMultiArray(
 	if (src_end - src < 3)
 		return -1;
 
-	int Q = *(uint16_t *)src;
+	int Q = *(const uint16_t *)src;
 	src += 2;
 
 	int out_size;
@@ -1639,10 +1638,10 @@ int Kraken_DecodeMultiArray(
 	int i;
 	for (i = 0; i + 2 <= num_lens; i += 2)
 	{
-		bits_f |= bswap_32(*(uint32_t *)f) >> (24 - bitpos_f);
+		bits_f |= bswap_32(*(const uint32_t *)f) >> (24 - bitpos_f);
 		f += (bitpos_f + 7) >> 3;
 
-		bits_b |= ((uint32_t *)b)[-1] >> (24 - bitpos_b);
+		bits_b |= ((const uint32_t *)b)[-1] >> (24 - bitpos_b);
 		b -= (bitpos_b + 7) >> 3;
 
 		int numbits_f = interval_lenlog2[i + 0];
@@ -1667,7 +1666,7 @@ int Kraken_DecodeMultiArray(
 	// read final one since above loop reads 2
 	if (i < num_lens)
 	{
-		bits_f |= bswap_32(*(uint32_t *)f) >> (24 - bitpos_f);
+		bits_f |= bswap_32(*(const uint32_t *)f) >> (24 - bitpos_f);
 		int numbits_f = interval_lenlog2[i];
 		bits_f = _rotl(bits_f | 1, numbits_f);
 		int value_f = bits_f & bitmasks[numbits_f];
@@ -1819,7 +1818,7 @@ int Krak_DecodeRLE(
 		}
 		else if (cmd >= 0x10)
 		{
-			uint32_t data = *(uint16_t *)(cmd_ptr_end - 2) - 4096;
+			uint32_t data = *(const uint16_t *)(cmd_ptr_end - 2) - 4096;
 			cmd_ptr_end -= 2;
 			uint32_t bytes_to_copy = data & 0x3F;
 			uint32_t bytes_to_rle = data >> 6;
@@ -1840,7 +1839,7 @@ int Krak_DecodeRLE(
 		else if (cmd >= 9)
 		{
 			uint32_t bytes_to_rle =
-				(*(uint16_t *)(cmd_ptr_end - 2) - 0x8ff) * 128;
+				(*(const uint16_t *)(cmd_ptr_end - 2) - 0x8ff) * 128;
 			cmd_ptr_end -= 2;
 			if (dst_end - dst < bytes_to_rle)
 				return -1;
@@ -1850,7 +1849,7 @@ int Krak_DecodeRLE(
 		else
 		{
 			uint32_t bytes_to_copy =
-				(*(uint16_t *)(cmd_ptr_end - 2) - 511) * 64;
+				(*(const uint16_t *)(cmd_ptr_end - 2) - 511) * 64;
 			cmd_ptr_end -= 2;
 			if (cmd_ptr_end - cmd_ptr < bytes_to_copy ||
 				dst_end - dst < bytes_to_copy)
