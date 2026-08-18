@@ -19,6 +19,7 @@
 
 #include "audio_n3d.h"
 #include "audiowl6.h"
+#include "byteorder.h"
 #include "expand.h"
 #include "idcl/idcl.h"
 #include "idcl/kraken/kraken.h"

@@ -8,6 +8,7 @@
 #include "audio_sod.h"
 #include "audio_wl1.h"
 #include "audio_wl6.h"
+#include "byteorder.h"
 #include "mame/fmopl.h"
 
 #define PATH_MAX 4096
@@ -157,7 +158,8 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 
 	free(audio->data);
 
-	const uint32_t len = letoh32(audio->head.offsets[audio->head.nOffsets - 1]);
+	const uint32_t len =
+		letoh32(audio->head.offsets[audio->head.nOffsets - 1]);
 
 	audio->data = malloc(len);
 	if (fread(audio->data, 1, len, f) != len)
