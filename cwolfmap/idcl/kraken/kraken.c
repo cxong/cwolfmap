@@ -122,7 +122,7 @@ static int rotl(unsigned int x, int r)
 #ifdef _MSC_VER
 	return _rotl(x, r);
 #else
-	return (x << r) | (x >> (32 - r);
+	return (x << r) | (x >> (32 - r));
 #endif
 }
 
