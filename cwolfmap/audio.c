@@ -101,30 +101,14 @@ void CWAudioTerminate(void)
 	YM3812Shutdown();
 }
 
-int CWAudioLoadHead(CWAudioHead *head, const char *path)
+int CWAudioLoadHead(
+	CWAudioHead *head, const unsigned char *data, const long fsize)
 {
 	int err = 0;
-	FILE *f = fopen(path, "rb");
-	if (!f)
-	{
-		fprintf(stderr, "Failed to read %s\n", path);
-		goto bail;
-	}
-
 	CWAudioHeadFree(head);
-
-	fseek(f, 0, SEEK_END);
-	const long fsize = ftell(f);
-	fseek(f, 0, SEEK_SET);
 	head->nOffsets = fsize / sizeof(uint32_t);
 	head->offsets = malloc(head->nOffsets * sizeof(uint32_t));
-	if (fread(head->offsets, sizeof(uint32_t), head->nOffsets, f) !=
-		head->nOffsets)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read audio head\n");
-		goto bail;
-	}
+	memcpy(head->offsets, data, sizeof(uint32_t) * head->nOffsets);
 
 	for (int i = 1; i < 0xf6; i++)
 	{
@@ -132,11 +116,6 @@ int CWAudioLoadHead(CWAudioHead *head, const char *path)
 	}
 	YM3812Write(oplChip, 1, 0x20, &volume); // Set WSE=1
 
-bail:
-	if (f)
-	{
-		fclose(f);
-	}
 	return err;
 }
 
@@ -146,28 +125,17 @@ void CWAudioHeadFree(CWAudioHead *head)
 	head->nOffsets = 0;
 }
 
-int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
+int CWAudioLoadAudioT(
+	CWAudio *audio, const CWMapType type, const unsigned char *data)
 {
 	int err = 0;
-	FILE *f = fopen(path, "rb");
-	if (!f)
-	{
-		fprintf(stderr, "Failed to read %s\n", path);
-		goto bail;
-	}
-
 	free(audio->data);
 
 	const uint32_t len =
 		letoh32(audio->head.offsets[audio->head.nOffsets - 1]);
 
 	audio->data = malloc(len);
-	if (fread(audio->data, 1, len, f) != len)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read audio data\n");
-		goto bail;
-	}
+	memcpy(audio->data, data, len);
 	switch (type)
 	{
 	case CWMAPTYPE_WL1:
@@ -193,10 +161,6 @@ int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path)
 	}
 
 bail:
-	if (f)
-	{
-		fclose(f);
-	}
 	return err;
 }
 

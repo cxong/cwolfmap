@@ -9,29 +9,14 @@
 // https://web.archive.org/web/20201206195550/http://gaarabis.free.fr/_sites/specs/wlspec_index.html
 #define PATH_MAX 4096
 
-int CWVSwapLoad(CWVSwap *vswap, const char *path)
+int CWVSwapLoad(CWVSwap *vswap, const unsigned char *data, const long fsize)
 {
 	int err = 0;
-	FILE *f = fopen(path, "rb");
-	if (!f)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read %s\n", path);
-		goto bail;
-	}
-
 	CWVSwapFree(vswap);
 
-	fseek(f, 0, SEEK_END);
-	vswap->dataLen = (size_t)ftell(f);
-	fseek(f, 0, SEEK_SET);
+	vswap->dataLen = (size_t)fsize;
 	vswap->data = malloc(vswap->dataLen);
-	if (fread(vswap->data, 1, vswap->dataLen, f) != vswap->dataLen)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read chunk data\n");
-		goto bail;
-	}
+	memcpy(vswap->data, data, vswap->dataLen);
 	memcpy(&vswap->head, vswap->data, sizeof vswap->head);
 	vswap->head.chunkCount = letoh16(vswap->head.chunkCount);
 	vswap->head.firstSprite = letoh16(vswap->head.firstSprite);
@@ -66,11 +51,6 @@ int CWVSwapLoad(CWVSwap *vswap, const char *path)
 		}
 	}
 
-bail:
-	if (f)
-	{
-		fclose(f);
-	}
 	return err;
 }
 

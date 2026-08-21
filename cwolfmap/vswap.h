@@ -29,7 +29,7 @@ typedef struct
 	int nSounds;
 } CWVSwap;
 
-int CWVSwapLoad(CWVSwap *vswap, const char *path);
+int CWVSwapLoad(CWVSwap *vswap, const unsigned char *data, const long fsize);
 void CWVSwapFree(CWVSwap *vswap);
 
 int CWVSwapGetSound(

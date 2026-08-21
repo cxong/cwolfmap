@@ -11,10 +11,12 @@
 bool CWAudioInit(void);
 void CWAudioTerminate(void);
 
-int CWAudioLoadHead(CWAudioHead *head, const char *path);
+int CWAudioLoadHead(
+	CWAudioHead *head, const unsigned char *data, const long fsize);
 void CWAudioHeadFree(CWAudioHead *head);
 
-int CWAudioLoadAudioT(CWAudio *audio, const CWMapType type, const char *path);
+int CWAudioLoadAudioT(
+	CWAudio *audio, const CWMapType type, const unsigned char *data);
 
 void CWAudioFree(CWAudio *audio);
 

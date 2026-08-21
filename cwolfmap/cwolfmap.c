@@ -118,17 +118,44 @@ CWMapType CWGetType(
 	return CWMAPTYPE_UNKNOWN;
 }
 
-static int LoadMapHead(CWolfMap *map, const char *path);
-static int LoadMapData(CWolfMap *map, const char *path);
+typedef struct
+{
+	FILE *f;
+	const unsigned char *data;
+} Resource;
+
+Resource ResourceNew(void)
+{
+	Resource r;
+	memset(&r, 0, sizeof r);
+	return r;
+}
+void ResourceFree(Resource *r)
+{
+	if (r->f)
+	{
+		fclose(r->f);
+	}
+	free(r->data);
+}
+
+static int LoadMapHead(CWolfMap *map, const unsigned char *data);
+static int LoadMapData(CWolfMap *map, const unsigned char *data);
 int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 {
 	memset(map, 0, sizeof *map);
 	char pathBuf[PATH_MAX];
+	long fsize = 0;
 	int err = 0;
 	int loadErr = 0;
 
 	const char *ext = "WL1";
 	const char *ext1 = "WL1";
+	Resource mapHead = ResourceNew();
+	Resource mapData = ResourceNew();
+	Resource audioHed = ResourceNew();
+	Resource audioT = ResourceNew();
+	Resource vswap = ResourceNew();
 	map->type = CWGetType(path, &ext, &ext1, spearMission);
 	if (map->type == CWMAPTYPE_UNKNOWN)
 	{
@@ -194,32 +221,56 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		numLumps = 0;
 	}
 
-#define _TRY_LOAD(_fn, _loadFunc, ...)                                        \
-	sprintf(pathBuf, "%s/" _fn ".%s", path, ext);                             \
+#define _TRY_LOAD(_resource, _fn, _loadFunc, ...)                             \
+	if (!_resource.data)                                                      \
+	{                                                                         \
+		sprintf(pathBuf, "%s/" _fn ".%s", path, ext);                         \
+		_resource.f = fopen(pathBuf, "rb");                                   \
+		if (!_resource.f)                                                     \
+		{                                                                     \
+			sprintf(pathBuf, "%s/" _fn ".%s", path, ext1);                    \
+			_resource.f = fopen(pathBuf, "rb");                               \
+			if (!_resource.f)                                                 \
+			{                                                                 \
+				err = -1;                                                     \
+				fprintf(stderr, "Failed to read %s\n", pathBuf);              \
+				goto bail;                                                    \
+			}                                                                 \
+		}                                                                     \
+		fseek(_resource.f, 0, SEEK_END);                                      \
+		fsize = ftell(_resource.f);                                           \
+		fseek(_resource.f, 0, SEEK_SET);                                      \
+		if (fread(_resource.data, 1, fsize, _resource.f) != (size_t)fsize)    \
+		{                                                                     \
+			err = -1;                                                         \
+			fprintf(stderr, "Failed to read file\n");                         \
+			goto bail;                                                        \
+		}                                                                     \
+	}                                                                         \
 	loadErr = _loadFunc(__VA_ARGS__);                                         \
 	if (loadErr != 0)                                                         \
 	{                                                                         \
-		sprintf(pathBuf, "%s/" _fn ".%s", path, ext1);                        \
-		loadErr = _loadFunc(__VA_ARGS__);                                     \
-		if (loadErr != 0)                                                     \
-		{                                                                     \
-			err = loadErr;                                                    \
-		}                                                                     \
+		err = loadErr;                                                        \
+		goto bail;                                                            \
 	}
-	_TRY_LOAD("MAPHEAD", LoadMapHead, map, pathBuf);
+	_TRY_LOAD(mapHead, "MAPHEAD", LoadMapHead, map, mapHead.data);
 
 	if (map->type == CWMAPTYPE_BS1 || map->type == CWMAPTYPE_BS6)
 	{
-		_TRY_LOAD("MAPTEMP", LoadMapData, map, pathBuf);
+		_TRY_LOAD(mapData, "MAPTEMP", LoadMapData, map, mapData.data);
 	}
 	else
 	{
-		_TRY_LOAD("GAMEMAPS", LoadMapData, map, pathBuf);
+		_TRY_LOAD(mapData, "GAMEMAPS", LoadMapData, map, mapData.data);
 	}
 
-	_TRY_LOAD("AUDIOHED", CWAudioLoadHead, &map->audio.head, pathBuf);
+	_TRY_LOAD(
+		audioHed, "AUDIOHED", CWAudioLoadHead, &map->audio.head, audioHed.data,
+		fsize);
 
-	_TRY_LOAD("AUDIOT", CWAudioLoadAudioT, &map->audio, map->type, pathBuf);
+	_TRY_LOAD(
+		audioT, "AUDIOT", CWAudioLoadAudioT, &map->audio, map->type,
+		audioT.data);
 
 	if (map->type == CWMAPTYPE_N3D)
 	{
@@ -244,26 +295,24 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		free(languageBuf);
 	}
 
-	_TRY_LOAD("VSWAP", CWVSwapLoad, &map->vswap, pathBuf);
+	_TRY_LOAD(vswap, "VSWAP", CWVSwapLoad, &map->vswap, vswap.data, fsize);
 
 bail:
+	ResourceFree(&mapHead);
+	ResourceFree(&mapData);
+	ResourceFree(&audioHed);
+	ResourceFree(&audioT);
+	ResourceFree(&vswap);
 	return err;
 }
-static int LoadMapHead(CWolfMap *map, const char *path)
+static int LoadMapHead(CWolfMap *map, const unsigned char *data)
 {
 	int err = 0;
 	memset(&map->mapHead, 0, sizeof map->mapHead);
-	FILE *f = fopen(path, "rb");
-	if (!f)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read %s\n", path);
-		goto bail;
-	}
 	const size_t size = sizeof map->mapHead;
 	// Read as many maps as we can; some versions of the game (SOD MP) truncate
 	// the headers
-	(void)!fread((void *)&map->mapHead, 1, size, f);
+	memcpy(&map->mapHead, data, size);
 	map->mapHead.magic = letoh16(map->mapHead.magic);
 
 	if (map->mapHead.magic != MAGIC)
@@ -277,10 +326,6 @@ static int LoadMapHead(CWolfMap *map, const char *path)
 		map->mapHead.ptr[i] = letoh32(map->mapHead.ptr[i]);
 
 bail:
-	if (f)
-	{
-		fclose(f);
-	}
 	return err;
 }
 
@@ -289,27 +334,9 @@ static void LevelsFree(CWolfMap *map);
 static int LoadLevel(
 	const CWolfMap *map, CWLevel *level, const unsigned char *data,
 	const int off);
-static int LoadMapData(CWolfMap *map, const char *path)
+static int LoadMapData(CWolfMap *map, const unsigned char *data)
 {
 	int err = 0;
-	unsigned char *buf = NULL;
-	FILE *f = fopen(path, "rb");
-	if (!f)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read %s\n", path);
-		goto bail;
-	}
-	fseek(f, 0, SEEK_END);
-	const long fsize = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	buf = malloc(fsize);
-	if (fread(buf, 1, fsize, f) != (size_t)fsize)
-	{
-		err = -1;
-		fprintf(stderr, "Failed to read file\n");
-		goto bail;
-	}
 
 	LevelsFree(map);
 
@@ -321,7 +348,7 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	CWLevel *lPtr = map->levels;
 	for (const int32_t *ptr = &map->mapHead.ptr[0]; *ptr > 0; ptr++, lPtr++)
 	{
-		err = LoadLevel(map, lPtr, buf, *ptr);
+		err = LoadLevel(map, lPtr, data, *ptr);
 		if (err != 0)
 		{
 			goto bail;
@@ -329,11 +356,6 @@ static int LoadMapData(CWolfMap *map, const char *path)
 	}
 
 bail:
-	if (f)
-	{
-		fclose(f);
-	}
-	free(buf);
 	if (err != 0)
 	{
 		CWFree(map);
