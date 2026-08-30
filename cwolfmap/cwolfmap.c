@@ -179,43 +179,68 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		for (int i = 0; i < numLumps; ++i)
 		{
 			const FileLump *lump = &lumps[i];
-			if (lump->compressedSize != lump->size)
+			Resource *resource = NULL;
+			bool freeLump = true;
+			if (strcmp(lump->name, "gamemaps.wl6") == 0)
 			{
-				// Decompress
-				uint8_t *dst = malloc(lump->size);
-				int res = Kraken_Decompress(
-					lump->data, lump->compressedSize, dst, lump->size);
-				if (res < 0)
-				{
-					fprintf(
-						stderr, "Decompression failed with error code %d\n",
-						res);
-					return 1;
-				}
-				if (res != lump->size)
-				{
-					fprintf(
-						stderr,
-						"Decompressed size mismatch: expected %llu, got %d\n",
-						lump->size, res);
-					return 1;
-				}
-				/*FILE *f = fopen(lump->name, "wb");
-				fwrite(dst, 1, lump->size, f);
-				fclose(f);*/
-				free(dst);
+				resource = &mapData;
 			}
-			else
+			else if (strcmp(lump->name, "maphead.wl6") == 0)
 			{
-				/*FILE *f = fopen(lump->name, "wb");
-				fwrite(lump->data, 1, lump->size, f);
-				fclose(f);*/
+				resource = &mapHead;
 			}
-		}
-		// Free allocated memory for both sets of lumps
-		for (int i = 0; i < numLumps; ++i)
-		{
-			free(lumps[i].data);
+			else if (strcmp(lump->name, "vgadict.wl6") == 0)
+			{
+				// Ignore
+			}
+			else if (strcmp(lump->name, "vgagraph.wl6") == 0)
+			{
+				// Ignore
+			}
+			else if (strcmp(lump->name, "vgahead.wl6") == 0)
+			{
+				// Ignore
+			}
+			else if (strcmp(lump->name, "vswap.wl6") == 0)
+			{
+				resource = &vswap;
+			}
+			if (resource)
+			{
+				if (lump->compressedSize != lump->size)
+				{
+					// Decompress
+					resource->data = malloc(lump->size);
+					int res = Kraken_Decompress(
+						lump->data, lump->compressedSize, resource->data,
+						lump->size);
+					if (res < 0)
+					{
+						fprintf(
+							stderr,
+							"Decompression failed with error code %d\n", res);
+						return 1;
+					}
+					if (res != lump->size)
+					{
+						fprintf(
+							stderr,
+							"Decompressed size mismatch: expected %llu, got "
+							"%d\n",
+							lump->size, res);
+						return 1;
+					}
+				}
+				else
+				{
+					resource->data = lump->data;
+					freeLump = false;
+				}
+			}
+			if (freeLump)
+			{
+				free(lump->data);
+			}
 		}
 		free(lumps);
 		numLumps = 0;
@@ -264,13 +289,17 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		_TRY_LOAD(mapData, "GAMEMAPS", LoadMapData, map, mapData.data);
 	}
 
-	_TRY_LOAD(
-		audioHed, "AUDIOHED", CWAudioLoadHead, &map->audio.head, audioHed.data,
-		fsize);
+	// Audio is processed encrypted OGG files for Wolfstone
+	if (map->type != CWMAPTYPE_STO)
+	{
+		_TRY_LOAD(
+			audioHed, "AUDIOHED", CWAudioLoadHead, &map->audio.head,
+			audioHed.data, fsize);
 
-	_TRY_LOAD(
-		audioT, "AUDIOT", CWAudioLoadAudioT, &map->audio, map->type,
-		audioT.data);
+		_TRY_LOAD(
+			audioT, "AUDIOT", CWAudioLoadAudioT, &map->audio, map->type,
+			audioT.data);
+	}
 
 	if (map->type == CWMAPTYPE_N3D)
 	{
