@@ -293,10 +293,10 @@ int WWiseLoadSoundbank(
 			// SoundId is obj.Id, mapped to FileId
 			char key[256];
 			sprintf(key, "%X", sfx->FileId);
-			char *id = (char *)(0) + obj->Id;
 			if (0 != hashmap_put(
 						 &wemToSoundId, strdup(key),
-						 (hashmap_uint32_t)strlen(key), (void *)id))
+						 (hashmap_uint32_t)strlen(key),
+						 (void *)(intptr_t)obj->Id))
 			{
 				fprintf(stderr, "Failed to put entry in hashmap\n");
 				err = -1;
