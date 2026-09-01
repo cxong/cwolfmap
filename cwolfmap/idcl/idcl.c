@@ -108,14 +108,14 @@ int LoadWolf2Lumps(const char* filename, FileLump** lumps, int* numLumps)
 {
 	FILE* file = fopen(filename, "rb");
 	if (!file) {
-		printf("Error: Could not open file %s\n", filename);
+		fprintf(stderr, "Error: Could not open file %s\n", filename);
 		return 1; // Error opening file
 	}
 	IDCLHeader header;
 	fread(&header, sizeof(IDCLHeader), 1, file);
 	// Check file fields
 	if (strncmp(header.magic, "IDCL", 4) != 0 || header.version != 12) {
-		printf("Error: Invalid IDCL file\n");
+		fprintf(stderr, "Error: Invalid IDCL file\n");
 		fclose(file);
 		return 1; // Invalid file
 	}
@@ -226,11 +226,9 @@ int LoadWolf2Lumps(const char* filename, FileLump** lumps, int* numLumps)
 			fread(lump->data, 1, lump->compressedSize, file);
 			lump->position = dirEntries[i].offset;
 			lump->encrypted = encrypted;
-			printf("Found lump: %s (size: %llu, compressed size: %llu, encrypted: %d)\n", lump->name, lump->size, lump->compressedSize, lump->encrypted);
+			fprintf(stderr, "Found lump: %s (size: %llu, compressed size: %llu, encrypted: %d)\n", lump->name, lump->size, lump->compressedSize, lump->encrypted);
 		}
 	}
-
-	printf("%d lumps\n", *numLumps);
 
 	fclose(file);
 	free(stringOffsets);
