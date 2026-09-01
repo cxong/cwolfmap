@@ -40,3 +40,13 @@ typedef struct
 	// Assumes one correct answer
 	int correctIdx;
 } CWN3DQuiz;
+
+// Internal helper type for loading resources from file or memory
+typedef struct
+{
+	FILE *f;
+	const unsigned char *data;
+} Resource;
+
+Resource ResourceNew(void);
+void ResourceFree(Resource *r);

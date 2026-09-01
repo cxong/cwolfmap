@@ -21,9 +21,8 @@
 #include "audiowl6.h"
 #include "byteorder.h"
 #include "expand.h"
-#include "idcl/idcl.h"
-#include "idcl/kraken/kraken.h"
 #include "n3d.h"
+#include "wolf2.h"
 
 // TODO: use map header magic value
 #define MAGIC 0xABCD
@@ -118,12 +117,6 @@ CWMapType CWGetType(
 	return CWMAPTYPE_UNKNOWN;
 }
 
-typedef struct
-{
-	FILE *f;
-	const unsigned char *data;
-} Resource;
-
 Resource ResourceNew(void)
 {
 	Resource r;
@@ -168,82 +161,11 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 	// read as memory files
 	if (map->type == CWMAPTYPE_STO)
 	{
-		FileLump *lumps;
-		int numLumps;
-		snprintf(pathBuf, sizeof(pathBuf), "%s/base/chunk_4.resources", path);
-		if (LoadWolf2Lumps(pathBuf, &lumps, &numLumps) != 0)
+		err = CWWolf2LoadResources(path, &mapHead, &mapData, &vswap);
+		if (err != 0)
 		{
-			fprintf(stderr, "Error loading lumps %s\n", pathBuf);
 			goto bail;
 		}
-		for (int i = 0; i < numLumps; ++i)
-		{
-			const FileLump *lump = &lumps[i];
-			Resource *resource = NULL;
-			bool freeLump = true;
-			if (strcmp(lump->name, "gamemaps.wl6") == 0)
-			{
-				resource = &mapData;
-			}
-			else if (strcmp(lump->name, "maphead.wl6") == 0)
-			{
-				resource = &mapHead;
-			}
-			else if (strcmp(lump->name, "vgadict.wl6") == 0)
-			{
-				// Ignore
-			}
-			else if (strcmp(lump->name, "vgagraph.wl6") == 0)
-			{
-				// Ignore
-			}
-			else if (strcmp(lump->name, "vgahead.wl6") == 0)
-			{
-				// Ignore
-			}
-			else if (strcmp(lump->name, "vswap.wl6") == 0)
-			{
-				resource = &vswap;
-			}
-			if (resource)
-			{
-				if (lump->compressedSize != lump->size)
-				{
-					// Decompress
-					resource->data = malloc(lump->size);
-					int res = Kraken_Decompress(
-						lump->data, lump->compressedSize, resource->data,
-						lump->size);
-					if (res < 0)
-					{
-						fprintf(
-							stderr,
-							"Decompression failed with error code %d\n", res);
-						return 1;
-					}
-					if (res != lump->size)
-					{
-						fprintf(
-							stderr,
-							"Decompressed size mismatch: expected %llu, got "
-							"%d\n",
-							lump->size, res);
-						return 1;
-					}
-				}
-				else
-				{
-					resource->data = lump->data;
-					freeLump = false;
-				}
-			}
-			if (freeLump)
-			{
-				free(lump->data);
-			}
-		}
-		free(lumps);
-		numLumps = 0;
 	}
 
 #define _TRY_LOAD(_resource, _fn, _loadFunc, ...)                             \
