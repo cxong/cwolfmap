@@ -7,7 +7,7 @@ add_subdirectory(wwiser)
 add_subdirectory(zip)
 
 add_library(cwolfmap STATIC ${CW_SOURCES} ${CWHEADERS})
-target_link_libraries(cwolfmap idcl kraken wad wwiser zip SDL2::SDL2)
+target_link_libraries(cwolfmap idcl kraken wad wwiser ww2ogg zip SDL2::SDL2)
 if(NOT WIN32)
 	target_link_libraries(cwolfmap m)
 endif()
