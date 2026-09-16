@@ -95,31 +95,6 @@ int CWWolf2LoadResources(
 		}
 	}
 	free(lumps);
-
-	// sound/soundbanks/pc/sound.pack contains sb_wolfstone.bnk
-	snprintf(
-		pathBuf, sizeof(pathBuf), "%s/base/sound/soundbanks/pc/sound.pack",
-		path);
-	if (LoadWolf2Lumps(pathBuf, &lumps, &numLumps) != 0)
-	{
-		fprintf(stderr, "Error loading sound lumps %s\n", pathBuf);
-		err = -1;
-		goto bail;
-	}
-	for (int i = 0; i < numLumps; ++i)
-	{
-		const FileLump *lump = &lumps[i];
-		if (strcmp(lump->name, "sb_wolfstone.bnk") == 0)
-		{
-			// Parse BNK file
-		}
-		// FILE *f = fopen(lump->name, "wb");
-		// fwrite(lump->data, 1, lump->size, f);
-		// fclose(f);
-		// printf("Wrote out lump %s\n", lump->name);
-		free(lump->data);
-	}
-	free(lumps);
 	numLumps = 0;
 
 bail:

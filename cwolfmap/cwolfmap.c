@@ -18,6 +18,7 @@
 #endif
 
 #include "audio_n3d.h"
+#include "audio_wolf2.h"
 #include "audiowl6.h"
 #include "byteorder.h"
 #include "expand.h"
@@ -223,8 +224,9 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 			audioT.data);
 	}
 
-	if (map->type == CWMAPTYPE_N3D)
+	switch (map->type)
 	{
+	case CWMAPTYPE_N3D:
 		// N3D stores music as ogg files in wad
 		sprintf(pathBuf, "%s/noah3d.wad", path);
 		loadErr = CWAudioN3DLoadAudioWAD(&map->audio, pathBuf);
@@ -244,6 +246,16 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 
 		CWN3DLoadQuizzes(map, languageBuf);
 		free(languageBuf);
+		break;
+	case CWMAPTYPE_STO:
+		loadErr = CWAudioWolf2LoadAudio(&map->audio, path);
+		if (loadErr != 0)
+		{
+			err = loadErr;
+		}
+		break;
+	default:
+		break;
 	}
 
 	_TRY_LOAD(vswap, "VSWAP", CWVSwapLoad, &map->vswap, vswap.data, fsize);

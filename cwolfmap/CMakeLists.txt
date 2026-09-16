@@ -1,5 +1,5 @@
-set(CW_SOURCES audio.c audio_bs6.c audio_n3d.c audio_sod.c audio_wl1.c audio_wl6.c cwolfmap.c expand.c n3d.c vswap.c wolf2.c mame/fmopl.c)
-set(CWHEADERS audiobs6.h audion3d.h AUDIOSOD.H AUDIOWL1.H audiowl6.h audio.h audio_bs6.h audio_n3d.h audio_sod.h audio_wl1.h audio_wl6.h common.h cwolfmap.h expand.h n3d.h vswap.h wolf2.h mame/fmopl.h)
+set(CW_SOURCES audio.c audio_bs6.c audio_n3d.c audio_sod.c audio_wl1.c audio_wl6.c audio_wolf2.c cwolfmap.c expand.c n3d.c vswap.c wolf2.c mame/fmopl.c)
+set(CWHEADERS audiobs6.h audion3d.h AUDIOSOD.H AUDIOWL1.H audiowl6.h audio.h audio_bs6.h audio_n3d.h audio_sod.h audio_wl1.h audio_wl6.h audio_wolf2.h common.h cwolfmap.h expand.h n3d.h vswap.h wolf2.h mame/fmopl.h)
 
 add_subdirectory(idcl)
 add_subdirectory(wad)

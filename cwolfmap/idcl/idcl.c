@@ -226,7 +226,7 @@ int LoadWolf2Lumps(const char* filename, FileLump** lumps, int* numLumps)
 			fread(lump->data, 1, lump->compressedSize, file);
 			lump->position = dirEntries[i].offset;
 			lump->encrypted = encrypted;
-			fprintf(stderr, "Found lump: %s (size: %llu, compressed size: %llu, encrypted: %d)\n", lump->name, lump->size, lump->compressedSize, lump->encrypted);
+			// fprintf(stderr, "Found lump: %s (size: %llu, compressed size: %llu, encrypted: %d)\n", lump->name, lump->size, lump->compressedSize, lump->encrypted);
 		}
 	}
 
