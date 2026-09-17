@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 		printf("Decompression failed with error code %d\n", res);
 		goto bail;
 	}
-	if (res != dst_len)
+	if (res != (int)dst_len)
 	{
 		printf(
 			"Decompressed size mismatch: expected %zu, got %d\n", dst_len,

@@ -72,7 +72,7 @@ int CWWolf2LoadResources(
 					err = -1;
 					goto bail;
 				}
-				if (res != lump->size)
+				if (res != (int)lump->size)
 				{
 					fprintf(
 						stderr,

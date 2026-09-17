@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 				printf("Decompression failed with error code %d\n", res);
 				return 1;
 			}
-			if (res != lump->size)
+			if (res != (int)lump->size)
 			{
 				printf(
 					"Decompressed size mismatch: expected %llu, got %d\n",

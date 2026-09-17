@@ -188,6 +188,7 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 		fseek(_resource.f, 0, SEEK_END);                                      \
 		fsize = ftell(_resource.f);                                           \
 		fseek(_resource.f, 0, SEEK_SET);                                      \
+		_resource.data = malloc(fsize);                                       \
 		if (fread(_resource.data, 1, fsize, _resource.f) != (size_t)fsize)    \
 		{                                                                     \
 			err = -1;                                                         \

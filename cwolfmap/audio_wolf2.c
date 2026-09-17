@@ -6,10 +6,90 @@
 #include "wwiser/ww2ogg/packed_codebooks_aoTuV_603.h"
 #include "wwiser/ww2ogg/wwriff.h"
 #include "wwiser/wwiser.h"
+#include "audiowolf2.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
 #endif
+
+static const musicnames songs[] = {
+	//
+	// Episode One
+	//
+	GETTHEM_MUS, SEARCHN_MUS, POW_MUS, SUSPENSE_MUS, GETTHEM_MUS, SEARCHN_MUS,
+	POW_MUS, SUSPENSE_MUS,
+
+	VICMARCH_MUS,	// Boss level
+	CORNER_MUS,	  // Secret level
+
+	//
+	// Episode Two
+	//
+	VICTORS_MUS, PREGNANT_MUS, GOINGAFT_MUS, HEADACHE_MUS, VICTORS_MUS,
+	PREGNANT_MUS, HEADACHE_MUS, GOINGAFT_MUS,
+
+	VICMARCH_MUS, // Boss level
+	DUNGEON_MUS,  // Secret level
+
+	//
+	// Episode Three
+	//
+	VICMARCH_MUS, NAZI_RAP_MUS, TWELFTH_MUS, ZEROHOUR_MUS, VICMARCH_MUS,
+	NAZI_RAP_MUS, TWELFTH_MUS, ZEROHOUR_MUS,
+
+	ULTIMATE_MUS, // Boss level
+	PACMAN_MUS,	  // Secret level
+
+	//
+	// Episode Four
+	//
+	GETTHEM_MUS, SEARCHN_MUS, POW_MUS, SUSPENSE_MUS, GETTHEM_MUS, SEARCHN_MUS,
+	POW_MUS, SUSPENSE_MUS,
+
+	VICMARCH_MUS, // Boss level
+	CORNER_MUS,	  // Secret level
+
+	//
+	// Episode Five
+	//
+	VICTORS_MUS, PREGNANT_MUS, GOINGAFT_MUS, HEADACHE_MUS, VICTORS_MUS,
+	PREGNANT_MUS, HEADACHE_MUS, GOINGAFT_MUS,
+
+	VICMARCH_MUS, // Boss level
+	DUNGEON_MUS,  // Secret level
+
+	//
+	// Episode Six
+	//
+	VICMARCH_MUS, NAZI_RAP_MUS, TWELFTH_MUS, ZEROHOUR_MUS, VICMARCH_MUS,
+	NAZI_RAP_MUS, TWELFTH_MUS, ZEROHOUR_MUS,
+
+	ULTIMATE_MUS, // Boss level
+	FUNKYOU_MUS	  // Secret level
+};
+int CWAudioWolf2GetLevelMusic(const int level)
+{
+	return songs[level];
+}
+
+int CWAudioWolf2GetSong(const CWSongType song)
+{
+	switch (song)
+	{
+	case SONG_INTRO:
+		return HITLWLTZ_MUS;
+	case SONG_MENU:
+		return WONDERIN_MUS;
+	case SONG_END:
+		return ENDLEVEL_MUS;
+	case SONG_ROSTER:
+		return ROSTER_MUS;
+	case SONG_VICTORY:
+		return URAHERO_MUS;
+	}
+	return -1;
+}
+
 
 static int wemCallback(const WWiseSound *ws);
 
@@ -92,6 +172,45 @@ int CWAudioWolf2LoadAudio(CWAudio *audio, const char *path)
 
 bail:
 	return err;
+}
+
+int CWAudioWolf2GetMusic(
+	CWAudio *audio, const int idx, char **data, size_t *len)
+{
+	// Map audio name to idx
+	// CORNER - 0
+	// DUNGEON - 1
+	// ENDLEVEL - g
+	// FUNKYOU - f
+	// GETTHEM - 3
+	// GOINGAFT - h
+	// HEADACHE - 4
+	// HITLWLTZ - 5
+	// NAZI_RAP - k
+	// PACMAN - q
+	// POW - 9
+	// PREGNANT - i
+	// ROSTER - n
+	// SALUTE - a
+	// SEARCHN - b
+	// SUSPENSE - c
+	// TWELFTH - m
+	// ULTIMATE - j
+	// URAHERO - o
+	// VICMARCH - p
+	// VICTORS - d
+	// WONDERIN - e
+	// ZEROHOUR - l
+	// Missing: 2 (WARMARCH, Boss level), 6 (INTROCW3), 7 (NAZI_NOR, intro), 8 (NAZI_OMI)
+	// WARMARCH - uses VICMARCH instead; WARMARCH is a mashup of anthems including horst wessel lied
+	// INTROCW3 - uses VICMARCH instead, contains hidden morse code
+	// NAZI_NOR - uses HITLWLTZ instead
+	// NAZI_OMI - uses VICTORS instead
+	(void)audio;
+	(void)idx;
+	(void)data;
+	(void)len;
+	return 0;
 }
 
 // 2. Convert soundbanks to wem using wwiser

@@ -8,6 +8,7 @@
 #include "audio_sod.h"
 #include "audio_wl1.h"
 #include "audio_wl6.h"
+#include "audio_wolf2.h"
 #include "byteorder.h"
 #include "mame/fmopl.h"
 
@@ -280,15 +281,19 @@ int CWAudioGetMusic(
 	*len = 0;
 	int err = 0;
 
-	if (type == CWMAPTYPE_N3D)
+	switch (type)
 	{
+	case CWMAPTYPE_N3D: {
 		wadentry_t *entry = WAD_GetEntry(audio->wad, idx);
 		*data = malloc(entry->length);
 		*len = entry->length;
 		err = WAD_GetEntryData(audio->wad, entry, (unsigned char *)*data);
 	}
-	else
-	{
+	break;
+	case CWMAPTYPE_STO:
+		err = CWAudioWolf2GetMusic(audio, idx, data, len);
+		break;
+	default: {
 		const char *rawData;
 		size_t rawLen;
 		err = CWAudioGetMusicRaw(audio, idx, &rawData, &rawLen);
@@ -373,6 +378,8 @@ int CWAudioGetMusic(
 			stream16 += SAMPLES_PER_MUSIC_TICK * MUSIC_AUDIO_CHANNELS;
 		}
 	}
+	break;
+	}
 
 	return err;
 
@@ -396,6 +403,8 @@ int CWAudioGetLevelMusic(const CWMapType type, const int level)
 		return CWAudioSODGetLevelMusic(level);
 	case CWMAPTYPE_N3D:
 		return CWAudioN3DGetLevelMusic(level);
+	case CWMAPTYPE_STO:
+		return CWAudioWolf2GetLevelMusic(level);
 	default:
 		return -1;
 	}
@@ -412,6 +421,8 @@ int CWAudioGetSong(const CWMapType type, const CWSongType song)
 		return CWAudioSODGetSong(song);
 	case CWMAPTYPE_N3D:
 		return CWAudioN3DGetSong(song);
+	case CWMAPTYPE_STO:
+		return CWAudioWolf2GetSong(song);
 	default:
 		return -1;
 	}

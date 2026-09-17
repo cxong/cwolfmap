@@ -106,16 +106,20 @@ int main(int argc, char *argv[])
 		Sound *sound = &sounds[nSounds - 1];
 		memset(sound, 0, sizeof *sound);
 		sprintf(sound->name, "MUS%05d", i);
-		if (map.type == CWMAPTYPE_N3D)
+		switch (map.type)
+		{
+		case CWMAPTYPE_N3D:
+		case CWMAPTYPE_STO: // fallthrough
 		{
 			printf("Loaded music %d (%d len)\n", i, (int)len);
 			SDL_RWops *rwops = SDL_RWFromMem(data, (int)len);
 			sound->mus = Mix_LoadMUS_RW(rwops, 1);
 		}
-		else
-		{
+		break;
+		default:
 			printf("Loaded adlib music %d (%d len)\n", i, (int)len);
 			sound->snd = Mix_QuickLoad_RAW((Uint8 *)data, (Uint32)len);
+			break;
 		}
 	}
 
@@ -123,10 +127,10 @@ int main(int argc, char *argv[])
 	{
 		printf("%c: %s\n", itoc(i), sounds[i].name);
 	}
-	printf("Choose music to play: ");
+	printf("Choose music to play (number > max to stop): ");
 	for (;;)
 	{
-		int cmd = ctoi(getch());
+		const int cmd = ctoi(getch());
 		if (cmd == -1)
 		{
 			break;
@@ -134,6 +138,7 @@ int main(int argc, char *argv[])
 		if (cmd >= nSounds)
 		{
 			Mix_PauseMusic();
+			Mix_HaltChannel(0);
 			continue;
 		}
 		if (map.type == CWMAPTYPE_N3D)
