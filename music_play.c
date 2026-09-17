@@ -141,13 +141,15 @@ int main(int argc, char *argv[])
 			Mix_HaltChannel(0);
 			continue;
 		}
-		if (map.type == CWMAPTYPE_N3D)
+		switch (map.type)
 		{
+		case CWMAPTYPE_N3D:
+		case CWMAPTYPE_STO: // fallthrough
 			Mix_PlayMusic(sounds[cmd].mus, 0);
-		}
-		else
-		{
+			break;
+		default:
 			Mix_PlayChannel(0, sounds[cmd].snd, 0);
+			break;
 		}
 	}
 

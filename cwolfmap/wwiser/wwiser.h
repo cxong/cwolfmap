@@ -9,4 +9,5 @@ typedef struct
 } WWiseSound;
 
 int WWiseLoadSoundbank(
-	const char *data, const size_t len, int (*callback)(const WWiseSound *));
+	const char *data, const size_t len,
+	int (*callback)(const WWiseSound *, void *), void *callbackData);

@@ -204,7 +204,8 @@ SoundName WolfstoneSoundNames[] = {
 	{0x3ED3FE9Fu, "DSHITDTH"}};
 
 int WWiseLoadSoundbank(
-	const char *data, const size_t len, int (*callback)(const WWiseSound *))
+	const char *data, const size_t len,
+	int (*callback)(const WWiseSound *, void *), void *callbackData)
 {
 	int err = 0;
 	uint64_t offset = 8;
@@ -377,7 +378,7 @@ int WWiseLoadSoundbank(
 		else
 			snprintf(
 				ws.filename, sizeof(ws.filename), "sound_%X.wem", sound->Id);
-		err = callback(&ws);
+		err = callback(&ws, callbackData);
 		if (err != 0)
 		{
 			goto bail;

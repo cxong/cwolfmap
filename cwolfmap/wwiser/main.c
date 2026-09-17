@@ -3,8 +3,9 @@
 
 #include "wwiser.h"
 
-int wemCallback(const WWiseSound* ws)
+int wemCallback(const WWiseSound* ws, void *data)
 {
+	(void)data;
 	// Write out the file for now
 	FILE *out = fopen(ws->filename, "wb");
 	if (out == NULL)
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
 	fseek(f, 0, SEEK_SET);
 	data = malloc(len);
 	fread(data, 1, len, f);
-	if (WWiseLoadSoundbank(data, len, wemCallback) != 0)
+	if (WWiseLoadSoundbank(data, len, wemCallback, NULL) != 0)
 	{
 		goto bail;
 	}

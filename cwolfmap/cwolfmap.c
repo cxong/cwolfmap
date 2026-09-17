@@ -224,6 +224,11 @@ int CWLoad(CWolfMap *map, const char *path, const int spearMission)
 			audioT, "AUDIOT", CWAudioLoadAudioT, &map->audio, map->type,
 			audioT.data);
 	}
+	else
+	{
+		// Load to init number of music tracks
+		CWAudioWolf2LoadAudioT(&map->audio);
+	}
 
 	switch (map->type)
 	{

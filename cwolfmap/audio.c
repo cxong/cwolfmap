@@ -155,6 +155,9 @@ int CWAudioLoadAudioT(
 	case CWMAPTYPE_N3D:
 		CWAudioN3DLoadAudioT(audio);
 		break;
+	case CWMAPTYPE_STO:
+		CWAudioWolf2LoadAudioT(audio);
+		break;
 	default:
 		fprintf(stderr, "Unknown map type\n");
 		err = -1;
@@ -170,6 +173,7 @@ void CWAudioFree(CWAudio *audio)
 	CWAudioHeadFree(&audio->head);
 	free(audio->data);
 	WAD_Close(audio->wad);
+	free(audio->path);
 }
 
 int CWAudioGetAdlibSoundRaw(

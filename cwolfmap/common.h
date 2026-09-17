@@ -30,6 +30,7 @@ typedef struct
 	int startMusic;
 	char *data;
 	wad_t *wad;
+	char *path;
 } CWAudio;
 
 typedef struct
