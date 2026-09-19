@@ -37,11 +37,17 @@
 *.hex
 audio_play
 cwolfmap_test
+idcl_test
+kraken_test
 music_extract
 music_play
+n3d_quiz_test
+revorb_test
 vswap_sound_extract
 vswap_sound_play
 wad_test
+ww2ogg_test
+wwiser_test
 zip_test
 
 # Debug files

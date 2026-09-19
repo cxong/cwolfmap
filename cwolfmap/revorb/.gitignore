@@ -85,3 +85,6 @@ enc_temp_folder/
 # Xcode
 *.xcodeproj/
 build/
+
+# Generated files
+config_types.h

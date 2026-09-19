@@ -28,6 +28,7 @@ endif()
 if(INTERNAL_OGG)
 	add_library(ogg STATIC libogg/src/bitwise.c libogg/src/framing.c)
 	target_include_directories(ogg PUBLIC libogg/include)
+	target_compile_options(ogg PRIVATE -w)
 	add_library(Ogg::ogg ALIAS ogg)
 
 	if(NOT WIN32 AND NOT APPLE)
@@ -90,10 +91,12 @@ if(INTERNAL_VORBIS)
 		libvorbis/lib/bitrate.h
 	)
 	target_include_directories(vorbis PUBLIC libvorbis/include PRIVATE libvorbis/lib)
-	target_link_libraries(vorbis PUBLIC Ogg::ogg)
+	target_compile_options(vorbis PRIVATE -w)
+	target_link_libraries(vorbis PUBLIC Ogg::ogg m)
 endif()
 
 add_subdirectory(revorb)
 
 add_executable(revorb_test main.c)
+target_compile_options(revorb_test PRIVATE -w)
 target_link_libraries(revorb_test revorb)
