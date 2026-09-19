@@ -9,7 +9,7 @@
 /* stuff from Tremor (lowmem) */
 int ilog(unsigned int v);
 
-unsigned int _book_maptype1_quantvals(unsigned int entries, unsigned int dimensions);
+unsigned int _book_maptype1_quantvals1(unsigned int entries, unsigned int dimensions);
 
 typedef struct
 {

@@ -13,7 +13,7 @@ int ilog(unsigned int v){
   return(ret);
 }
 
-unsigned int _book_maptype1_quantvals(unsigned int entries, unsigned int dimensions){
+unsigned int _book_maptype1_quantvals1(unsigned int entries, unsigned int dimensions){
   /* get us a starting hint, we'll polish it below */
   int bits=ilog(entries);
   int vals=entries>>((bits-1)*(dimensions-1)/dimensions);
@@ -240,7 +240,7 @@ void codebook_library_copy(codebook_library *cb_lib, Bit_stream *bis, Bit_oggstr
         Bit_oggstream_left_shift_bit_uint(bos, &max);
         Bit_oggstream_left_shift_bit_uint(bos, &value_length);
         Bit_oggstream_left_shift_bit_uint(bos, &sequence_flag);
-        unsigned int quantvals = _book_maptype1_quantvals(entries.total, dimensions.total);
+        unsigned int quantvals = _book_maptype1_quantvals1(entries.total, dimensions.total);
         for (unsigned int i = 0; i < quantvals; i++)
         {
             /* IN/OUT: n bit value */
@@ -403,7 +403,7 @@ void codebook_library_rebuild(codebook_library *cb_lib, Bit_stream *bis, unsigne
         Bit_oggstream_left_shift_bit_uint(bos, &max);
         Bit_oggstream_left_shift_bit_uint(bos, &value_length);
         Bit_oggstream_left_shift_bit_uint(bos, &sequence_flag);
-        unsigned int quantvals = _book_maptype1_quantvals(entries.total, dimensions.total);
+        unsigned int quantvals = _book_maptype1_quantvals1(entries.total, dimensions.total);
         for (unsigned int i = 0; i < quantvals; i++)
         {
             /* IN/OUT: n bit value */

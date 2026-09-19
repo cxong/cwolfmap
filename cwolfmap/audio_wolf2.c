@@ -4,6 +4,7 @@
 
 #include "audiowolf2.h"
 #include "idcl/idcl.h"
+#include "revorb.h"
 #include "wwiser/ww2ogg/packed_codebooks_aoTuV_603.h"
 #include "wwiser/ww2ogg/wwriff.h"
 #include "wwiser/wwiser.h"
@@ -236,6 +237,7 @@ bail:
 // 2. Convert soundbanks to wem using wwiser
 static int wemCallback(const WWiseSound *ws, void *data)
 {
+	char *generated_stream = NULL;
 	// 3. Convert wem to ogg using ww2ogg
 	int err = 0;
 	WEMCallbackData *wData = data;
@@ -254,7 +256,7 @@ static int wemCallback(const WWiseSound *ws, void *data)
 		}
 
 		long stream_length;
-		char *generated_stream =
+		generated_stream =
 			Wwise_RIFF_Vorbis_generate_ogg(&decoder, &stream_length);
 		if (!generated_stream)
 		{
@@ -263,31 +265,24 @@ static int wemCallback(const WWiseSound *ws, void *data)
 			goto bail;
 		}
 
-		// 4. Apply gain to music
+		// 4. Revorb so SDL can play it
+		char *data_out = NULL;
+		size_t size_out = 0;
+		if (!revorb(generated_stream, stream_length, &data_out, &size_out))
+		{
+			fprintf(stderr, "Failed to revorb ogg stream\n");
+			err = -1;
+			goto bail;
+		}
+
+		// 5. Apply gain to music
 		// TODO: SFX?
-		*wData->len = stream_length;
-		*wData->data = generated_stream;
-		// Write out file as test
-		char OUT[256];
-		sprintf(OUT, "%s.ogg", ws->filename);
-		FILE *out = fopen(OUT, "wb");
-		if (!out)
-		{
-			fprintf(stderr, "Failed to open output file\n");
-			err = 1;
-			goto bail;
-		}
-		if (fwrite(generated_stream, 1, stream_length, out) !=
-			(size_t)stream_length)
-		{
-			fprintf(stderr, "Failed to write output file\n");
-			err = 1;
-			goto bail;
-		}
-		fclose(out);
+		*wData->len = size_out;
+		*wData->data = data_out;
 		err = 1; // found
 	}
 
 bail:
+	free(generated_stream);
 	return err;
 }
