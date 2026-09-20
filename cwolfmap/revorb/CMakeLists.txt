@@ -94,7 +94,7 @@ if(INTERNAL_VORBIS)
 	target_compile_options(vorbis PRIVATE -w)
 	target_link_libraries(vorbis PUBLIC Ogg::ogg)
 	if(NOT WIN32)
-		target_link_libraries(vorbis m)
+		target_link_libraries(vorbis PUBLIC m)
 	endif()
 endif()
 
