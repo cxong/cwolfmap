@@ -1,6 +1,7 @@
 #include "audio_wolf2.h"
 
 #include <stdlib.h>
+#include <SDL_mixer.h>
 
 #include "audiowolf2.h"
 #include "idcl/idcl.h"
@@ -277,7 +278,6 @@ static int wemCallback(const WWiseSound *ws, void *data)
 		int channels;
 		int sample_rate;
 		short *samples = NULL;
-		// TODO: (windows only?) music is twice as fast, stb bug? Or channels 1?
 		const int sample_count = stb_vorbis_decode_memory(
 			generated_stream, (int)stream_length, &channels, &sample_rate,
 			&samples);
@@ -307,11 +307,21 @@ static int wemCallback(const WWiseSound *ws, void *data)
 				v = -32768;
 			samples[i] = (short)v;
 		}
-		// TODO: convert audio format to match
+		// Convert audio format to match
+		SDL_AudioCVT cvt;
+		SDL_BuildAudioCVT(
+			&cvt, AUDIO_S16SYS, channels, sample_rate, AUDIO_S16SYS,
+			MUSIC_AUDIO_CHANNELS,
+			MUSIC_SAMPLE_RATE);
+		cvt.len = sample_count * channels * sizeof(short);
+		cvt.buf = (Uint8 *)SDL_malloc(cvt.len * cvt.len_mult);
+		SDL_memcpy(cvt.buf, samples, cvt.len);
+		SDL_ConvertAudio(&cvt);
+		free(samples);
+
 		// TODO: SFX?
-		*wData->len = sample_count * channels * sizeof(short);
-		*wData->data = (char *)samples;
-		samples = NULL;
+		*wData->len = cvt.len_cvt;
+		*wData->data = (char *)cvt.buf;
 		err = 1; // found
 	}
 
