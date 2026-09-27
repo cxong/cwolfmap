@@ -1,7 +1,6 @@
 #include "audio_wolf2.h"
 
 #include <stdlib.h>
-#include <SDL_mixer.h>
 
 #include "audiowolf2.h"
 #include "idcl/idcl.h"
@@ -307,21 +306,18 @@ static int wemCallback(const WWiseSound *ws, void *data)
 				v = -32768;
 			samples[i] = (short)v;
 		}
-		// Convert audio format to match
-		SDL_AudioCVT cvt;
-		SDL_BuildAudioCVT(
-			&cvt, AUDIO_S16SYS, channels, sample_rate, AUDIO_S16SYS,
-			MUSIC_AUDIO_CHANNELS,
-			MUSIC_SAMPLE_RATE);
-		cvt.len = sample_count * channels * sizeof(short);
-		cvt.buf = (Uint8 *)SDL_malloc(cvt.len * cvt.len_mult);
-		SDL_memcpy(cvt.buf, samples, cvt.len);
-		SDL_ConvertAudio(&cvt);
+		// Convert audio format to match - just double the channels
+		const int converted_len = sample_count * 2 * sizeof(short);
+		short *converted = malloc(converted_len);
+		for (int i = 0; i < sample_count; i++)
+		{
+			converted[i * 2] = converted[i * 2+1] = samples[i];
+		}
 		free(samples);
 
 		// TODO: SFX?
-		*wData->len = cvt.len_cvt;
-		*wData->data = (char *)cvt.buf;
+		*wData->len = converted_len;
+		*wData->data = (char *)converted;
 		err = 1; // found
 	}
 
