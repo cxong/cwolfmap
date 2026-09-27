@@ -4,7 +4,15 @@
 
 #include "audiowolf2.h"
 #include "idcl/idcl.h"
-#include "revorb.h"
+#ifdef _MSC_VER
+#pragma warning(disable : 4057)
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4245)
+#pragma warning(disable : 4456)
+#pragma warning(disable : 4457)
+#pragma warning(disable : 4701)
+#endif
+#include "stb_vorbis.c"
 #include "wwiser/ww2ogg/packed_codebooks_aoTuV_603.h"
 #include "wwiser/ww2ogg/wwriff.h"
 #include "wwiser/wwiser.h"
@@ -265,20 +273,45 @@ static int wemCallback(const WWiseSound *ws, void *data)
 			goto bail;
 		}
 
-		// 4. Revorb so SDL can play it
-		char *data_out = NULL;
-		size_t size_out = 0;
-		if (!revorb(generated_stream, stream_length, &data_out, &size_out))
+		// 4. Apply gain to music
+		int channels;
+		int sample_rate;
+		short *samples = NULL;
+		// TODO: (windows only?) music is twice as fast, stb bug? Or channels 1?
+		const int sample_count = stb_vorbis_decode_memory(
+			generated_stream, (int)stream_length, &channels, &sample_rate,
+			&samples);
+		if (sample_count <= 0)
 		{
-			fprintf(stderr, "Failed to revorb ogg stream\n");
+			fprintf(stderr, "Failed to decode ogg stream\n");
 			err = -1;
 			goto bail;
 		}
-
-		// 5. Apply gain to music
+		// Apply basic bass boost
+		int vprevs[4];
+		memset(vprevs, 0, sizeof vprevs);
+		for (int i = 0; i < sample_count; i++)
+		{
+			int vsum = 0;
+			for (int j = 1; j < 4; j++)
+			{
+				vsum += vprevs[j];
+				vprevs[j - 1] = vprevs[j];
+			}
+			const int vavg = (vsum + samples[i]) / 4;
+			vprevs[3] = samples[i];
+			int v = (int)((samples[i] + vavg * 4.0f) * 3.0f);
+			if (v > 32767)
+				v = 32767;
+			else if (v < -32768)
+				v = -32768;
+			samples[i] = (short)v;
+		}
+		// TODO: convert audio format to match
 		// TODO: SFX?
-		*wData->len = size_out;
-		*wData->data = data_out;
+		*wData->len = sample_count * channels * sizeof(short);
+		*wData->data = (char *)samples;
+		samples = NULL;
 		err = 1; // found
 	}
 

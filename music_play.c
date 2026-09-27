@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
 		switch (map.type)
 		{
 		case CWMAPTYPE_N3D:
-		case CWMAPTYPE_STO: // fallthrough
 		{
 			printf("Loaded music %d (%d len)\n", i, (int)len);
 			SDL_RWops *rwops = SDL_RWFromMem(data, (int)len);
@@ -144,7 +143,6 @@ int main(int argc, char *argv[])
 		switch (map.type)
 		{
 		case CWMAPTYPE_N3D:
-		case CWMAPTYPE_STO: // fallthrough
 			Mix_PlayMusic(sounds[cmd].mus, 0);
 			break;
 		default:
